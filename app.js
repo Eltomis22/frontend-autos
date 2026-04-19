@@ -165,10 +165,52 @@ function escapeHtml(text) {
         .replace(/"/g, '&quot;');
 }
 
-/* ---------- Init navbar automáticamente ---------- */
+/* ---------- Toggle de visibilidad en inputs de contraseña ----------
+   Convierte cualquier <input type="password" class="password-field"> en un
+   campo con un botón de ojo que alterna entre type=password y type=text.
+   Idempotente: si ya tiene el botón, no duplica.
+------------------------------------------------------------------- */
+function attachPasswordToggles(root = document) {
+    const inputs = root.querySelectorAll('input[type="password"].password-field');
+    inputs.forEach((input) => {
+        if (input.dataset.pwToggleReady === '1') return;
+        input.dataset.pwToggleReady = '1';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-field-wrapper';
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'password-toggle';
+        btn.setAttribute('aria-label', 'Mostrar contraseña');
+        btn.innerHTML = eyeIcon(false);
+
+        btn.addEventListener('click', () => {
+            const visible = input.type === 'text';
+            input.type = visible ? 'password' : 'text';
+            btn.setAttribute('aria-label', visible ? 'Mostrar contraseña' : 'Ocultar contraseña');
+            btn.innerHTML = eyeIcon(!visible);
+            input.focus({ preventScroll: true });
+        });
+
+        wrapper.appendChild(btn);
+    });
+}
+
+function eyeIcon(visible) {
+    // Ícono SVG inline — no requiere librerías externas.
+    return visible
+        ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a19.4 19.4 0 0 1 5.06-5.94"/><path d="M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.6 19.6 0 0 1-3.17 4.19"/><path d="M1 1l22 22"/><path d="M14.12 14.12a3 3 0 0 1-4.24-4.24"/></svg>`
+        : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+
+/* ---------- Init navbar y password toggles automáticamente ---------- */
 document.addEventListener('DOMContentLoaded', () => {
     const menu = document.getElementById('navbarMenu');
     if (menu && !menu.innerHTML.trim()) {
         renderNavbar();
     }
+    attachPasswordToggles();
 });

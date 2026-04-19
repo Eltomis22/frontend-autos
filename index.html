@@ -36,9 +36,9 @@
                         de historial y rango de precio de mercado verificado. Asesoramiento, financiación y consignación
                         bajo un mismo techo.
                     </p>
-                    <div class="hero-actions">
+                    <div class="hero-actions" id="heroActions">
                         <a href="cars.html" class="btn btn-accent">Ver vehículos disponibles</a>
-                        <a href="register.html" class="btn btn-secondary">Crear cuenta</a>
+                        <a href="register.html" class="btn btn-secondary" id="heroSecondaryCta">Crear cuenta</a>
                     </div>
                     <ul class="hero-pills">
                         <li>Asesoramiento</li>
@@ -189,8 +189,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderNavbar('home');
+            adaptHeroCta();
             loadLatestCars();
         });
+
+        function adaptHeroCta() {
+            const cta = document.getElementById('heroSecondaryCta');
+            if (!cta) return;
+            if (!Auth.isLoggedIn()) return;   // queda "Crear cuenta" para visitantes
+            if (Auth.getRol() === 'vendedor') {
+                cta.href = 'publish.html';
+                cta.textContent = 'Publicar mi auto';
+            } else {
+                cta.href = 'mi-cuenta.html';
+                cta.textContent = 'Ir a mi cuenta';
+            }
+        }
 
         /* ---------- Carrusel del hero ---------- */
         const HERO_ROTATION_MS = 5000;
