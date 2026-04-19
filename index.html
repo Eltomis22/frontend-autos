@@ -63,6 +63,19 @@
             </div>
         </section>
 
+        <section class="container" id="latestCarsSection">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" style="margin-bottom: 0.3rem;">Últimas publicaciones</h2>
+                    <p class="section-subtitle" style="margin-bottom: 0;">Los vehículos más recientes que llegaron a Cato Group.</p>
+                </div>
+                <a href="cars.html" class="btn btn-ghost">Ver todo el catálogo →</a>
+            </div>
+            <div id="latestCarsContainer">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
+        </section>
+
         <section class="features">
             <div class="features-container">
                 <h2 class="section-title">Por qué elegir Cato Group</h2>
@@ -172,7 +185,63 @@
 
     <script src="app.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => renderNavbar('home'));
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNavbar('home');
+            loadLatestCars();
+        });
+
+        async function loadLatestCars() {
+            const container = document.getElementById('latestCarsContainer');
+            try {
+                const cars = await apiCall('/vehiculos');
+                const latest = Array.isArray(cars) ? cars.slice(0, 6) : [];
+                if (latest.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">🚗</div>
+                            <h3>Todavía no hay vehículos publicados</h3>
+                            <p>Volvé pronto: estamos sumando nuevas unidades al catálogo.</p>
+                        </div>`;
+                    return;
+                }
+                container.innerHTML = `<div class="cars-grid">${latest.map(renderLatestCard).join('')}</div>`;
+            } catch (err) {
+                console.error('Error cargando últimas publicaciones:', err);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <h3>No pudimos cargar los vehículos destacados</h3>
+                        <p>${escapeHtml(err.message)}</p>
+                    </div>`;
+            }
+        }
+
+        function renderLatestCard(car) {
+            const foto = Array.isArray(car.imagenes) && car.imagenes.length
+                ? (typeof car.imagenes[0] === 'string' ? car.imagenes[0] : car.imagenes[0]?.urlImagen)
+                : '';
+            return `
+                <article class="car-card">
+                    <div class="car-card-image">
+                        ${foto
+                            ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>Sin foto disponible</div>'">`
+                            : `<div class="no-image">Sin foto disponible</div>`}
+                        <span class="car-card-badge">Disponible</span>
+                    </div>
+                    <div class="car-card-body">
+                        <h3 class="car-card-title">${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h3>
+                        <div class="car-card-meta">
+                            <span>📅 ${car.anio || '—'}</span>
+                            ${car.kilometraje != null ? `<span>🛣️ ${formatKm(car.kilometraje)}</span>` : ''}
+                            ${car.ubicacion ? `<span>📍 ${escapeHtml(car.ubicacion)}</span>` : ''}
+                        </div>
+                        <div class="car-card-price">${formatPrice(car.precio)}</div>
+                        <div class="car-card-actions">
+                            <a href="car-detail.html?id=${encodeURIComponent(car.idVehiculo)}" class="btn btn-primary btn-block">Ver detalles</a>
+                        </div>
+                    </div>
+                </article>`;
+        }
     </script>
 </body>
 </html>

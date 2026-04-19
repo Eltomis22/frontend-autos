@@ -448,7 +448,8 @@ main {
 /* ---------- Hero (estilo showroom Cato Group) ---------- */
 .hero {
     background:
-        linear-gradient(135deg, #0a1322 0%, #0e1b30 50%, #132849 100%);
+        radial-gradient(ellipse at 20% 0%, rgba(107, 168, 217, 0.08) 0%, transparent 55%),
+        linear-gradient(135deg, #030406 0%, #07090d 50%, #0a0c12 100%);
     color: white;
     padding: 5.5rem 1.5rem 6rem;
     position: relative;
@@ -1966,5 +1967,28 @@ textarea {
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+/* ---------- Section header (título + acción a la derecha) ---------- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.2rem;
+    margin-bottom: 1.6rem;
+    flex-wrap: wrap;
+}
+
+.section-header .section-title {
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .section-header {
+        align-items: stretch;
+    }
+    .section-header .btn {
+        align-self: flex-start;
+    }
 }
 
