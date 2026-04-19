@@ -577,12 +577,92 @@ main {
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-image .hero-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(192, 220, 245, 0.45);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.hero-image .hero-card-img-wrapper {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-image .hero-card img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: var(--radius-md);
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    display: block;
+}
+
+.hero-image .hero-card-placeholder {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1rem;
+}
+
+/* ---------- Hero slider (rotación de destacados) ---------- */
+.hero-slider {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.hero-slider .hero-card {
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.22s ease;
+}
+
+.hero-slider .hero-card.is-fading {
+    opacity: 0;
+    transform: translateY(4px);
+}
+
+.hero-slider-dots {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.2rem;
+}
+
+.hero-slider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, width 0.2s ease;
+}
+
+.hero-slider-dot:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+.hero-slider-dot.is-active {
+    background: var(--color-accent, #6ba8d9);
+    width: 22px;
 }
 
 .hero-image .hero-card-title {

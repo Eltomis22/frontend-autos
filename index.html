@@ -47,17 +47,19 @@
                     </ul>
                 </div>
                 <div class="hero-image">
-                    <div class="hero-card">
-                        <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=900&q=70"
-                             alt="Auto seleccionado — Cato Group"
-                             onerror="this.style.display='none'">
-                        <div class="hero-card-title">Renault Sandero</div>
-                        <div class="hero-card-meta">
-                            <span>Usado seleccionado</span>
-                            <span>Nafta</span>
-                            <span>Manual</span>
-                        </div>
-                        <div class="hero-card-price">Consultar financiación</div>
+                    <div class="hero-slider" id="heroSlider">
+                        <a href="#" class="hero-card" id="heroFeaturedCard">
+                            <div class="hero-card-img-wrapper">
+                                <img id="heroFeaturedImg" src="" alt="" style="display:none;">
+                                <div class="hero-card-placeholder" id="heroFeaturedPlaceholder">Seleccionando vehículo destacado...</div>
+                            </div>
+                            <div class="hero-card-title" id="heroFeaturedTitle">Unidad destacada</div>
+                            <div class="hero-card-meta" id="heroFeaturedMeta">
+                                <span>Usado seleccionado</span>
+                            </div>
+                            <div class="hero-card-price" id="heroFeaturedPrice">Ver catálogo</div>
+                        </a>
+                        <div class="hero-slider-dots" id="heroSliderDots"></div>
                     </div>
                 </div>
             </div>
@@ -190,11 +192,26 @@
             loadLatestCars();
         });
 
+        /* ---------- Carrusel del hero ---------- */
+        const HERO_ROTATION_MS = 5000;
+        let heroSlides = [];
+        let heroIndex = 0;
+        let heroTimer = null;
+
         async function loadLatestCars() {
             const container = document.getElementById('latestCarsContainer');
             try {
                 const cars = await apiCall('/vehiculos');
-                const latest = Array.isArray(cars) ? cars.slice(0, 6) : [];
+                const lista = Array.isArray(cars) ? cars : [];
+
+                // Destacados del hero: priorizamos los que tienen foto, hasta 5.
+                heroSlides = lista.filter(primeraFoto).slice(0, 5);
+                if (heroSlides.length === 0 && lista.length > 0) {
+                    heroSlides = [lista[0]]; // fallback: al menos uno, aunque no tenga foto
+                }
+                initHeroSlider();
+
+                const latest = lista.slice(0, 6);
                 if (latest.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
@@ -214,6 +231,107 @@
                         <p>${escapeHtml(err.message)}</p>
                     </div>`;
             }
+        }
+
+        function primeraFoto(car) {
+            if (!Array.isArray(car?.imagenes) || !car.imagenes.length) return '';
+            const first = car.imagenes[0];
+            return typeof first === 'string' ? first : (first?.urlImagen || '');
+        }
+
+        function initHeroSlider() {
+            if (!heroSlides.length) return;
+            heroIndex = 0;
+            renderHeroFeatured(heroSlides[0]);
+            renderHeroDots();
+
+            const slider = document.getElementById('heroSlider');
+            slider.addEventListener('mouseenter', stopHeroRotation);
+            slider.addEventListener('mouseleave', startHeroRotation);
+            // En mobile pausa al tocar.
+            slider.addEventListener('touchstart', stopHeroRotation, { passive: true });
+
+            if (heroSlides.length > 1) startHeroRotation();
+        }
+
+        function startHeroRotation() {
+            if (heroSlides.length <= 1) return;
+            stopHeroRotation();
+            heroTimer = setInterval(() => goToSlide(heroIndex + 1), HERO_ROTATION_MS);
+        }
+
+        function stopHeroRotation() {
+            if (heroTimer) { clearInterval(heroTimer); heroTimer = null; }
+        }
+
+        function goToSlide(i) {
+            if (!heroSlides.length) return;
+            const nuevo = ((i % heroSlides.length) + heroSlides.length) % heroSlides.length;
+            if (nuevo === heroIndex) return;
+            heroIndex = nuevo;
+
+            const card = document.getElementById('heroFeaturedCard');
+            card.classList.add('is-fading');
+            setTimeout(() => {
+                renderHeroFeatured(heroSlides[heroIndex]);
+                renderHeroDots();
+                card.classList.remove('is-fading');
+            }, 220);
+        }
+
+        function renderHeroDots() {
+            const dotsEl = document.getElementById('heroSliderDots');
+            if (!dotsEl) return;
+            if (heroSlides.length <= 1) { dotsEl.innerHTML = ''; return; }
+            dotsEl.innerHTML = heroSlides.map((_, i) =>
+                `<button type="button" class="hero-slider-dot${i === heroIndex ? ' is-active' : ''}" data-slide="${i}" aria-label="Ir al vehículo ${i + 1}"></button>`
+            ).join('');
+            dotsEl.querySelectorAll('.hero-slider-dot').forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    stopHeroRotation();
+                    goToSlide(Number(dot.dataset.slide));
+                    startHeroRotation();
+                });
+            });
+        }
+
+        function renderHeroFeatured(car) {
+            const foto = primeraFoto(car);
+            const card = document.getElementById('heroFeaturedCard');
+            const img = document.getElementById('heroFeaturedImg');
+            const placeholder = document.getElementById('heroFeaturedPlaceholder');
+            const title = document.getElementById('heroFeaturedTitle');
+            const meta = document.getElementById('heroFeaturedMeta');
+            const price = document.getElementById('heroFeaturedPrice');
+
+            card.href = `car-detail.html?id=${encodeURIComponent(car.idVehiculo)}`;
+
+            if (foto) {
+                img.src = foto;
+                img.alt = `${car.marca || ''} ${car.modelo || ''}`.trim();
+                img.style.display = '';
+                placeholder.style.display = 'none';
+                img.addEventListener('error', () => {
+                    img.style.display = 'none';
+                    placeholder.textContent = 'Foto no disponible';
+                    placeholder.style.display = '';
+                }, { once: true });
+            } else {
+                img.style.display = 'none';
+                placeholder.style.display = '';
+                placeholder.textContent = 'Sin foto disponible';
+            }
+
+            title.textContent = `${car.marca || ''} ${car.modelo || ''}`.trim() || 'Vehículo destacado';
+
+            const chips = [];
+            if (car.anio) chips.push(car.anio);
+            if (car.kilometraje != null) chips.push(formatKm(car.kilometraje));
+            if (car.ubicacion) chips.push(car.ubicacion);
+            meta.innerHTML = chips.map(c => `<span>${escapeHtml(String(c))}</span>`).join('') || '<span>Usado seleccionado</span>';
+
+            price.textContent = car.precio != null ? formatPrice(car.precio) : 'Consultar precio';
         }
 
         function renderLatestCard(car) {
