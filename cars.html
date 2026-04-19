@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de vehículos — Cato Group</title>
+    <meta name="description" content="Explorá el catálogo de Cato Group: usados seleccionados y 0km con filtros por marca, modelo, precio, año y ubicación.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <span class="logo-icon" aria-hidden="true">CT</span>
+                <span class="brand-text">
+                    <span class="brand-name">Cato</span><span class="brand-sub">Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+            <ul class="navbar-menu" id="navbarMenu"></ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1 class="section-title">Catálogo de vehículos</h1>
+            <p class="section-subtitle">Usados seleccionados y 0km disponibles en Cato Group. Filtrá por marca, modelo, precio, año y ubicación.</p>
+
+            <section class="filters-bar">
+                <h3>🔍 Filtros de búsqueda</h3>
+                <form id="filterForm">
+                    <div class="filters-grid">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="marca">Marca</label>
+                            <input type="text" id="marca" placeholder="Toyota, Ford...">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="modelo">Modelo</label>
+                            <input type="text" id="modelo" placeholder="Corolla, Focus...">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="precioMin">Precio mínimo (USD)</label>
+                            <input type="number" id="precioMin" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="precioMax">Precio máximo (USD)</label>
+                            <input type="number" id="precioMax" min="0" placeholder="100000">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="anioMin">Año desde</label>
+                            <input type="number" id="anioMin" min="1900" max="2026" placeholder="2010">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="ubicacion">Ubicación</label>
+                            <input type="text" id="ubicacion" placeholder="Buenos Aires...">
+                        </div>
+                    </div>
+                    <div class="flex-row" style="margin-top: 1rem;">
+                        <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+                        <button type="button" id="clearFilters" class="btn btn-ghost">Limpiar</button>
+                    </div>
+                </form>
+            </section>
+
+            <div class="cars-header">
+                <div>
+                    <h2>Resultados</h2>
+                    <span class="results-count" id="resultsCount">Cargando...</span>
+                </div>
+                <button id="compareBtn" class="btn btn-accent hidden">Comparar seleccionados (0)</button>
+            </div>
+
+            <div id="carsContainer"></div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-bottom">
+            &copy; 2026 Cato Group — Agencia Multimarca
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="cars.js"></script>
+</body>
+</html>

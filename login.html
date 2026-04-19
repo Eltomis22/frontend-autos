@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión — Cato Group</title>
+    <meta name="description" content="Ingresá a tu cuenta de Cato Group para seguir tus vehículos favoritos, comparar unidades y administrar tus publicaciones.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <span class="logo-icon" aria-hidden="true">CT</span>
+                <span class="brand-text">
+                    <span class="brand-name">Cato</span><span class="brand-sub">Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+            <ul class="navbar-menu" id="navbarMenu"></ul>
+        </div>
+    </nav>
+
+    <main>
+        <section class="auth-split">
+            <aside class="auth-hero">
+                <div class="auth-hero-content">
+                    <div class="auth-hero-mark">
+                        <span class="mark-badge" aria-hidden="true">CT</span>
+                        <span class="mark-text">
+                            <strong>Cato Group</strong>
+                            <small>Agencia Multimarca</small>
+                        </span>
+                    </div>
+
+                    <span class="auth-hero-kicker">Bienvenido de vuelta</span>
+                    <h2>Tu próximo auto te <span class="accent">está esperando</span>.</h2>
+                    <p class="auth-hero-lead">
+                        Iniciá sesión para retomar tus búsquedas, revisar tus favoritos
+                        y administrar tus publicaciones.
+                    </p>
+
+                    <ul class="auth-hero-bullets">
+                        <li>Favoritos sincronizados entre dispositivos</li>
+                        <li>Historial de vehículos consultados</li>
+                        <li>Gestión de tus publicaciones en un solo lugar</li>
+                    </ul>
+                </div>
+
+                <div class="auth-hero-foot">
+                    &copy; 2026 Cato Group — Agencia Multimarca
+                </div>
+            </aside>
+
+            <div class="auth-form-panel">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title">Iniciar sesión</h1>
+                        <p class="card-subtitle">Ingresá a tu cuenta para continuar.</p>
+
+                        <div id="message"></div>
+
+                        <form id="loginForm" novalidate>
+                            <div class="form-group">
+                                <label for="email">Correo electrónico</label>
+                                <input type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Contraseña</label>
+                                <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Iniciar sesión</button>
+                        </form>
+
+                        <p class="text-center mt-3" style="color: var(--color-text-muted); font-size: 0.9rem;">
+                            ¿No tenés cuenta? <a href="register.html" style="font-weight: 600;">Registrate acá</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar vehículo — Cato Group</title>
+    <meta name="description" content="Consigná tu vehículo en Cato Group. Completá los datos, subí fotos y recibí una valoración técnica con rango estimado de precio.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <span class="logo-icon" aria-hidden="true">CT</span>
+                <span class="brand-text">
+                    <span class="brand-name">Cato</span><span class="brand-sub">Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+            <ul class="navbar-menu" id="navbarMenu"></ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container" style="max-width: 780px;">
+            <h1 class="section-title">Publicar un vehículo</h1>
+            <p class="section-subtitle">Completá los datos del vehículo y subí fotos claras. Recibirás una valoración técnica con rango estimado de precio de mercado.</p>
+
+            <div class="card">
+                <div class="card-body">
+                    <div id="message"></div>
+
+                    <form id="publishForm" novalidate>
+                        <h3 style="margin-bottom: 1rem; font-size: 1.05rem;">Datos generales</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="marca">Marca</label>
+                                <input type="text" id="marca" placeholder="Toyota" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelo">Modelo</label>
+                                <input type="text" id="modelo" placeholder="Corolla" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="anio">Año</label>
+                                <input type="number" id="anio" min="1900" max="2026" placeholder="2020" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="kilometraje">Kilometraje</label>
+                                <input type="number" id="kilometraje" min="0" placeholder="45000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="precio">Precio (USD)</label>
+                                <input type="number" id="precio" min="0" placeholder="18500" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="combustible">Combustible</label>
+                                <select id="combustible" required>
+                                    <option value="">Seleccionar</option>
+                                    <option value="Nafta">Nafta</option>
+                                    <option value="Diésel">Diésel</option>
+                                    <option value="GNC">GNC</option>
+                                    <option value="Híbrido">Híbrido</option>
+                                    <option value="Eléctrico">Eléctrico</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="transmision">Transmisión</label>
+                                <select id="transmision" required>
+                                    <option value="">Seleccionar</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Automática">Automática</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ubicacion">Ubicación</label>
+                                <input type="text" id="ubicacion" placeholder="Buenos Aires, CABA" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" placeholder="Estado general, mantenimiento realizado, detalles importantes..." required></textarea>
+                        </div>
+
+                        <h3 style="margin: 1.5rem 0 1rem; font-size: 1.05rem;">Fotografías</h3>
+                        <div class="form-group">
+                            <label for="imagenes">Imágenes del vehículo</label>
+                            <input type="file" id="imagenes" multiple accept="image/*">
+                            <p class="form-hint">Podés subir varias imágenes. Las fotos se utilizan para generar la valoración técnica del vehículo.</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Publicar vehículo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-bottom">
+            &copy; 2026 Cato Group — Agencia Multimarca
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="publish.js"></script>
+</body>
+</html>

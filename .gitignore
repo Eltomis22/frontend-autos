@@ -1,0 +1,22 @@
+# Dependencias (por si más adelante se agregan)
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editores / SO
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+
+# Configs locales con URLs / claves de entorno
+config.local.js
+.env
+.env.local
