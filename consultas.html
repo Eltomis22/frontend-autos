@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultas recibidas — Cato Group</title>
+    <meta name="description" content="Bandeja de entrada del vendedor: consultas de compradores interesados en tus publicaciones.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <span class="logo-icon" aria-hidden="true">CT</span>
+                <span class="brand-text">
+                    <span class="brand-name">Cato</span><span class="brand-sub">Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+            <ul class="navbar-menu" id="navbarMenu"></ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1 class="section-title">Consultas recibidas</h1>
+            <p class="section-subtitle">Mensajes de compradores interesados en los vehículos que publicaste. Marcá como leídas las que ya contactaste.</p>
+
+            <div id="feedback"></div>
+
+            <section id="consultasContainer" class="consultas-list">
+                <div class="empty-state">
+                    <div class="empty-icon">📨</div>
+                    <h3>Cargando consultas...</h3>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-bottom">
+            &copy; 2026 Cato Group — Agencia Multimarca
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="consultas.js"></script>
+</body>
+</html>

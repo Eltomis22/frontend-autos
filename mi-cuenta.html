@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi cuenta — Cato Group</title>
+    <meta name="description" content="Gestioná tu perfil en Cato Group: actualizá tus datos personales y cambiá tu contraseña.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <span class="logo-icon" aria-hidden="true">CT</span>
+                <span class="brand-text">
+                    <span class="brand-name">Cato</span><span class="brand-sub">Group</span>
+                </span>
+            </a>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+            <ul class="navbar-menu" id="navbarMenu"></ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1 class="section-title">Mi cuenta</h1>
+            <p class="section-subtitle">Revisá los datos de tu perfil y mantené tu contraseña al día.</p>
+
+            <div id="feedback"></div>
+
+            <section class="account-grid">
+                <!-- Datos de la cuenta -->
+                <div class="account-card">
+                    <h3>Información de la cuenta</h3>
+                    <p class="card-description">Tus datos tal como figuran en Cato Group.</p>
+                    <div id="accountInfo">
+                        <div class="empty-state" style="padding: 1.2rem 0;">Cargando...</div>
+                    </div>
+                </div>
+
+                <!-- Perfil editable -->
+                <div class="account-card">
+                    <h3>Actualizar mi nombre</h3>
+                    <p class="card-description">El nombre aparece en las consultas que enviás a los vendedores.</p>
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="nombre">Nombre completo</label>
+                            <input type="text" id="nombre" minlength="2" maxlength="100" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="profileBtn">Guardar cambios</button>
+                    </form>
+                </div>
+
+                <!-- Cambiar contraseña -->
+                <div class="account-card">
+                    <h3>Cambiar contraseña</h3>
+                    <p class="card-description">Necesitás tu contraseña actual para confirmar el cambio.</p>
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="passwordActual">Contraseña actual</label>
+                            <input type="password" id="passwordActual" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordNueva">Nueva contraseña</label>
+                            <input type="password" id="passwordNueva" minlength="8" maxlength="72" required autocomplete="new-password">
+                            <span class="form-hint">Al menos 8 caracteres, combinando letras y números.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordConfirmar">Confirmar nueva contraseña</label>
+                            <input type="password" id="passwordConfirmar" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="passwordBtn">Actualizar contraseña</button>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-bottom">
+            &copy; 2026 Cato Group — Agencia Multimarca
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+    <script src="mi-cuenta.js"></script>
+</body>
+</html>

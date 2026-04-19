@@ -92,9 +92,12 @@ function renderNavbar(current = '') {
 
     if (logged && rol === 'vendedor') {
         html += link('publish.html', 'Publicar auto', 'publish');
+        html += link('mis-publicaciones.html', 'Mis publicaciones', 'mis-publicaciones');
+        html += link('consultas.html', 'Consultas recibidas', 'consultas');
     }
 
     if (logged) {
+        html += link('mi-cuenta.html', 'Mi cuenta', 'mi-cuenta');
         html += `<li><a href="#" id="logoutLink">Cerrar sesión</a></li>`;
     } else {
         html += link('login.html', 'Iniciar sesión', 'login');

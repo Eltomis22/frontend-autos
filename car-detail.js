@@ -110,21 +110,29 @@ function displayCarDetail(car, ia) {
         });
     });
 
-    // Formulario de contacto (mock simple, el endpoint puede implementarse después)
+    // Formulario de contacto real — persiste la consulta en el backend (POST /consultas).
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('contactBtn');
         const message = document.getElementById('message').value.trim();
-        if (!message) return;
+        if (message.length < 5) {
+            showAlert('contactMessage', 'La consulta debe tener al menos 5 caracteres.', 'error');
+            return;
+        }
         if (!Auth.isLoggedIn()) {
             showAlert('contactMessage', 'Iniciá sesión para contactar al vendedor.', 'error');
             return;
         }
         setButtonLoading(btn, true, 'Enviando...');
         try {
-            // Placeholder: si implementás /contactos en el backend, cambiá esto.
-            await new Promise(res => setTimeout(res, 600));
-            showAlert('contactMessage', 'Consulta enviada correctamente.', 'success');
+            await apiCall('/consultas', {
+                method: 'POST',
+                body: JSON.stringify({
+                    idVehiculo: car.idVehiculo,
+                    mensaje: message,
+                }),
+            });
+            showAlert('contactMessage', 'Consulta enviada correctamente. El vendedor recibirá tus datos de contacto.', 'success');
             document.getElementById('message').value = '';
         } catch (err) {
             showAlert('contactMessage', 'No se pudo enviar la consulta: ' + err.message, 'error');

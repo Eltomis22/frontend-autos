@@ -35,7 +35,7 @@ async function loadCars() {
     resultsCount.textContent = 'Cargando...';
 
     const params = new URLSearchParams();
-    const fields = ['marca', 'modelo', 'precioMin', 'precioMax', 'anioMin', 'ubicacion'];
+    const fields = ['marca', 'modelo', 'precioMin', 'precioMax', 'anioMin', 'anioMax', 'kmMax', 'ubicacion'];
     fields.forEach(f => {
         const v = document.getElementById(f)?.value?.trim();
         if (v) params.append(f, v);
