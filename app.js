@@ -96,6 +96,10 @@ function renderNavbar(current = '') {
         html += link('consultas.html', 'Consultas recibidas', 'consultas');
     }
 
+    if (logged && rol === 'comprador') {
+        html += link('mis-consultas.html', 'Mis consultas', 'mis-consultas');
+    }
+
     if (logged) {
         html += link('mi-cuenta.html', 'Mi cuenta', 'mi-cuenta');
         html += `<li><a href="#" id="logoutLink">Cerrar sesión</a></li>`;

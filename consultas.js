@@ -1,4 +1,9 @@
-/* Bandeja de entrada de consultas para el vendedor */
+/* =========================================================
+   Bandeja de consultas del vendedor con conversación ida y vuelta.
+   Requiere app.js y consultas-thread.js.
+   ========================================================= */
+
+let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     renderNavbar('consultas');
@@ -16,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
         return;
     }
+    currentUser = Auth.getUser() || {};
     loadConsultas();
 });
 
@@ -33,9 +39,7 @@ async function loadConsultas() {
             return;
         }
         container.innerHTML = consultas.map(renderConsulta).join('');
-        container.querySelectorAll('[data-marcar-leida]').forEach(btn => {
-            btn.addEventListener('click', () => marcarLeida(btn.dataset.marcarLeida, btn));
-        });
+        attachHandlers(container);
     } catch (err) {
         console.error('Error cargando consultas:', err);
         container.innerHTML = `
@@ -48,9 +52,6 @@ async function loadConsultas() {
 }
 
 function renderConsulta(c) {
-    const fecha = c.fechaConsulta
-        ? new Date(c.fechaConsulta).toLocaleString('es-AR', { dateStyle: 'medium', timeStyle: 'short' })
-        : '';
     const vehiculo = c.vehiculo || {};
     const comprador = c.comprador || {};
     const leidaBadge = c.leida
@@ -67,7 +68,7 @@ function renderConsulta(c) {
         : '';
 
     return `
-        <article class="consulta-card ${c.leida ? 'is-read' : 'is-new'}">
+        <article class="consulta-card ${c.leida ? 'is-read' : 'is-new'}" data-consulta-id="${escapeHtml(c.idConsulta)}">
             <header class="consulta-header">
                 <div class="consulta-vehiculo">
                     <a href="car-detail.html?id=${encodeURIComponent(vehiculo.idVehiculo)}" class="consulta-vehiculo-title">${vehiculoTitle}</a>
@@ -75,20 +76,47 @@ function renderConsulta(c) {
                 </div>
                 ${leidaBadge}
             </header>
-            <div class="consulta-body">
-                <p class="consulta-message">${escapeHtml(c.mensaje || '')}</p>
-            </div>
+
+            ${renderThreadTimeline(c, currentUser.idUsuario)}
+
+            ${renderReplyForm(c.idConsulta)}
+
             <footer class="consulta-footer">
                 <div class="consulta-comprador">
                     <span class="consulta-comprador-name">${escapeHtml(comprador.nombre || 'Comprador')}</span>
                     ${emailLink}
                 </div>
                 <div class="consulta-actions">
-                    <span class="consulta-fecha">${fecha}</span>
                     ${!c.leida ? `<button class="btn btn-ghost btn-sm" data-marcar-leida="${escapeHtml(c.idConsulta)}">Marcar como leída</button>` : ''}
                 </div>
             </footer>
         </article>`;
+}
+
+function attachHandlers(container) {
+    container.querySelectorAll('[data-marcar-leida]').forEach((btn) => {
+        btn.addEventListener('click', () => marcarLeida(btn.dataset.marcarLeida, btn));
+    });
+
+    container.querySelectorAll('form.thread-reply').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const idConsulta = form.dataset.replyFor;
+            const textarea = form.querySelector('textarea');
+            const mensaje = textarea.value.trim();
+            const btn = form.querySelector('button[type="submit"]');
+            if (!mensaje) return;
+
+            try {
+                await enviarRespuesta(idConsulta, mensaje, btn);
+                textarea.value = '';
+                showAlert('feedback', 'Respuesta enviada.', 'success');
+                await loadConsultas();
+            } catch (err) {
+                showAlert('feedback', 'No se pudo enviar: ' + err.message, 'error');
+            }
+        });
+    });
 }
 
 async function marcarLeida(idConsulta, btn) {
