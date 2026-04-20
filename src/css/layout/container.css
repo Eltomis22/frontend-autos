@@ -1,0 +1,22 @@
+/* ==========================================================
+   layout/container.css — contenedores y wrappers de página.
+   ========================================================== */
+
+/* ---------- Layout ---------- */
+main {
+    flex: 1;
+    width: 100%;
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+
+.container-narrow {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+}
+

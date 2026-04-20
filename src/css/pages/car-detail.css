@@ -1,0 +1,301 @@
+/* ==========================================================
+   pages/car-detail.css — ficha del vehículo (car-detail.html):
+   layout del detalle, tarjeta del vendedor y panel de valoración.
+   ========================================================== */
+
+/* ---------- Car detail ---------- */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+.detail-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.detail-gallery-main {
+    aspect-ratio: 16 / 10;
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.detail-gallery-main img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.detail-gallery-thumbs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+}
+
+.detail-gallery-thumbs img {
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.65;
+    transition: all var(--transition);
+    border: 1px solid var(--color-border);
+}
+
+.detail-gallery-thumbs img:hover,
+.detail-gallery-thumbs img.active {
+    opacity: 1;
+    border-color: var(--color-primary);
+}
+
+.detail-info h1 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+}
+
+.detail-info .location {
+    color: var(--color-text-muted);
+    margin-bottom: 1.1rem;
+    font-size: 0.95rem;
+}
+
+.detail-info .price {
+    font-size: 2.3rem;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.025em;
+}
+
+.detail-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    padding: 1.3rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-xs);
+}
+
+.detail-specs .spec-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.3rem 0;
+}
+
+.detail-specs .spec-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.detail-specs .spec-value {
+    font-weight: 700;
+    color: var(--color-text);
+    font-size: 1.02rem;
+}
+
+.detail-description {
+    margin-bottom: 1.5rem;
+    padding: 1.4rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+}
+
+.detail-description h3 {
+    font-weight: 700;
+    margin-bottom: 0.55rem;
+    letter-spacing: -0.01em;
+}
+
+.detail-description p {
+    color: var(--color-text-muted);
+    line-height: 1.75;
+}
+
+/* ---------- Tarjeta del vendedor ---------- */
+.seller-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.3rem;
+    margin-bottom: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+}
+
+.seller-card .seller-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-surface-dark);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.seller-card .seller-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.seller-card .seller-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.seller-card .seller-name {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    word-break: break-word;
+}
+
+.seller-card .seller-meta {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.seller-card .seller-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+/* ---------- Valoración / panel técnico ---------- */
+.ia-panel,
+.value-panel {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.6rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.ia-panel::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--color-primary);
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.ia-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.ia-panel-header .ia-badge {
+    background: var(--color-surface-3);
+    color: var(--color-text);
+    padding: 0.28rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-border-strong);
+}
+
+.ia-panel-header h3 {
+    font-weight: 700;
+    font-size: 1.06rem;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+}
+
+.ia-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.95rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.ia-status.excelente { background: var(--color-success-soft); color: var(--color-success); border: 1px solid rgba(21, 128, 61, 0.3); }
+.ia-status.bueno     { background: var(--color-info-soft);    color: var(--color-info);    border: 1px solid rgba(29, 78, 216, 0.3); }
+.ia-status.regular   { background: var(--color-warning-soft); color: var(--color-warning); border: 1px solid rgba(180, 83, 9, 0.3); }
+.ia-status.reparacion{ background: var(--color-danger-soft);  color: var(--color-danger);  border: 1px solid rgba(185, 28, 28, 0.3); }
+
+.ia-bullets {
+    margin-top: 1rem;
+    padding-left: 1.2rem;
+    color: var(--color-text);
+}
+
+.ia-bullets li {
+    margin-bottom: 0.35rem;
+    font-size: 0.94rem;
+    color: var(--color-text);
+}
+
+.ia-price-estimate {
+    margin-top: 1.1rem;
+    padding: 1rem 1.1rem;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+.ia-price-estimate .label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.ia-price-estimate .range {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    margin-top: 0.25rem;
+}
+

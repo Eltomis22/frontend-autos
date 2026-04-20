@@ -1,0 +1,80 @@
+/* ==========================================================
+   layout/footer.css — footer del sitio.
+   ========================================================== */
+
+/* ---------- Footer ---------- */
+.site-footer {
+    background: var(--color-surface-dark);
+    color: rgba(226, 232, 240, 0.78);
+    padding: 3.5rem 1.5rem 1.8rem;
+    margin-top: 4rem;
+    position: relative;
+}
+
+.site-footer-content {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2.5rem;
+    padding-bottom: 2.2rem;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.12);
+}
+
+.site-footer h4 {
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+    font-size: 0.98rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    letter-spacing: -0.005em;
+}
+
+.footer-logo {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ffffff;
+    object-fit: cover;
+    padding: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    vertical-align: middle;
+}
+
+.site-footer ul {
+    list-style: none;
+}
+
+.site-footer li {
+    margin-bottom: 0.5rem;
+}
+
+.site-footer a {
+    color: rgba(226, 232, 240, 0.65);
+    font-size: 0.9rem;
+    transition: color var(--transition);
+}
+
+.site-footer a:hover {
+    color: #ffffff;
+}
+
+.site-footer p {
+    color: rgba(226, 232, 240, 0.65);
+    font-size: 0.9rem;
+    line-height: 1.65;
+}
+
+.site-footer-bottom {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding-top: 1.6rem;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(226, 232, 240, 0.45);
+    letter-spacing: 0.02em;
+}
+

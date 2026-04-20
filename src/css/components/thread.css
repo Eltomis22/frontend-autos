@@ -1,0 +1,147 @@
+/* ==========================================================
+   components/thread.css — hilo de conversación comprador/vendedor
+   y formulario inline de respuesta (reutilizado por consultas.html
+   y mis-consultas.html).
+   ========================================================== */
+
+/* ---------- Hilo de conversación (consultas) ---------- */
+.thread-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0 1.2rem;
+    padding: 1rem 1.1rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.thread-message {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    max-width: 85%;
+    box-shadow: var(--shadow-xs);
+}
+
+.thread-message.is-mine {
+    align-self: flex-end;
+    background: var(--color-primary);
+    color: #ffffff;
+    border-color: var(--color-primary);
+}
+
+.thread-message.is-mine .thread-message-body {
+    color: #ffffff;
+}
+
+.thread-message.is-mine .thread-message-author,
+.thread-message.is-mine .thread-message-role,
+.thread-message.is-mine .thread-message-date,
+.thread-message.is-mine .thread-message-tag {
+    color: rgba(226, 232, 240, 0.82);
+}
+
+.thread-message.is-theirs {
+    align-self: flex-start;
+}
+
+.thread-message-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+}
+
+.thread-message-author {
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.005em;
+}
+
+.thread-message-role {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-surface-3);
+    color: var(--color-text-muted);
+    font-weight: 700;
+    border: 1px solid var(--color-border);
+}
+
+.thread-message.is-mine .thread-message-role {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.thread-message-date {
+    font-size: 0.75rem;
+    color: var(--color-text-subtle);
+    margin-left: auto;
+}
+
+.thread-message-tag {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-xs);
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border);
+}
+
+.thread-message-body {
+    color: var(--color-text);
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.94rem;
+}
+
+/* ---------- Formulario de respuesta ---------- */
+.thread-reply {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-bottom: 1rem;
+}
+
+.thread-reply-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 0.01em;
+}
+
+.thread-reply-textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.thread-reply-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+
+@media (max-width: 640px) {
+    .thread-message {
+        max-width: 100%;
+    }
+}

@@ -75,6 +75,28 @@ async function apiCall(endpoint, options = {}) {
     return response.json();
 }
 
+/* ---------- Route helper (location-aware) ----------
+   La estructura del proyecto es:
+     frontend-autos/
+     ├── index.html              (raíz)
+     └── src/
+         ├── js/  ├── css/  ├── assets/
+         └── views/             (resto de los HTML)
+
+   Las páginas cargan app.js desde dos ubicaciones distintas:
+     - index.html (en la raíz)           → para ir a una view usa 'src/views/xxx.html'
+     - src/views/*.html (en views/)      → para ir a una view usa 'xxx.html' (hermano)
+                                           y para ir a index.html usa '../../index.html'
+
+   route('index')          → devuelve el camino correcto a index.html desde la página actual
+   route('cars')           → devuelve el camino correcto a src/views/cars.html
+---------------------------------------------------- */
+function route(name) {
+    const isInViews = /\/src\/views\//.test(window.location.pathname);
+    if (name === 'index') return isInViews ? '../../index.html' : 'index.html';
+    return isInViews ? `${name}.html` : `src/views/${name}.html`;
+}
+
 /* ---------- Navbar rendering ---------- */
 function renderNavbar(current = '') {
     const menu = document.getElementById('navbarMenu');
@@ -87,25 +109,25 @@ function renderNavbar(current = '') {
         `<li><a href="${href}" class="${current === key ? 'active' : ''} ${cls}">${label}</a></li>`;
 
     let html = '';
-    html += link('index.html', 'Inicio', 'home');
-    html += link('cars.html', 'Buscar autos', 'cars');
+    html += link(route('index'), 'Inicio', 'home');
+    html += link(route('cars'), 'Buscar autos', 'cars');
 
     if (logged && rol === 'vendedor') {
-        html += link('publish.html', 'Publicar auto', 'publish');
-        html += link('mis-publicaciones.html', 'Mis publicaciones', 'mis-publicaciones');
-        html += link('consultas.html', 'Consultas recibidas', 'consultas');
+        html += link(route('publish'), 'Publicar auto', 'publish');
+        html += link(route('mis-publicaciones'), 'Mis publicaciones', 'mis-publicaciones');
+        html += link(route('consultas'), 'Consultas recibidas', 'consultas');
     }
 
     if (logged && rol === 'comprador') {
-        html += link('mis-consultas.html', 'Mis consultas', 'mis-consultas');
+        html += link(route('mis-consultas'), 'Mis consultas', 'mis-consultas');
     }
 
     if (logged) {
-        html += link('mi-cuenta.html', 'Mi cuenta', 'mi-cuenta');
+        html += link(route('mi-cuenta'), 'Mi cuenta', 'mi-cuenta');
         html += `<li><a href="#" id="logoutLink">Cerrar sesión</a></li>`;
     } else {
-        html += link('login.html', 'Iniciar sesión', 'login');
-        html += link('register.html', 'Registrarme', 'register', 'btn-nav-primary');
+        html += link(route('login'), 'Iniciar sesión', 'login');
+        html += link(route('register'), 'Registrarme', 'register', 'btn-nav-primary');
     }
 
     menu.innerHTML = html;
@@ -115,7 +137,7 @@ function renderNavbar(current = '') {
         logoutLink.addEventListener('click', (e) => {
             e.preventDefault();
             Auth.clear();
-            window.location.href = 'index.html';
+            window.location.href = route('index');
         });
     }
 

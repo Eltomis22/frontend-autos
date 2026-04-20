@@ -1,0 +1,35 @@
+/* ==========================================================
+   components/alerts.css — mensajes de alerta inline
+   (info, success, error, warning).
+   ========================================================== */
+
+/* ---------- Alerts / messages ---------- */
+.alert {
+    padding: 0.95rem 1.2rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1rem;
+    font-size: 0.93rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background: var(--color-success-soft);
+    color: #166534;
+    border-color: rgba(21, 128, 61, 0.3);
+}
+
+.alert-error {
+    background: var(--color-danger-soft);
+    color: #991b1b;
+    border-color: rgba(185, 28, 28, 0.3);
+}
+
+.alert-info {
+    background: var(--color-info-soft);
+    color: #1e40af;
+    border-color: rgba(29, 78, 216, 0.3);
+}
+

@@ -1,0 +1,111 @@
+/* ==========================================================
+   components/forms.css — inputs, labels, grupos de formulario,
+   validaciones y estados de campo.
+   ========================================================== */
+
+/* ---------- Forms ---------- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--color-text);
+    margin-bottom: 0.45rem;
+    letter-spacing: 0.01em;
+}
+
+.form-group .form-hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.35rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.78rem 1rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.94rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-text-subtle);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+    border-color: var(--color-accent-warm);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 16px;
+    padding-right: 2.6rem;
+}
+
+select option {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+input[type="file"] {
+    padding: 0.55rem 0.85rem;
+    color: var(--color-text-muted);
+    background: var(--color-surface-2);
+}
+
+input[type="file"]::file-selector-button {
+    background: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-xs);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-right: 0.85rem;
+    transition: background var(--transition);
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: var(--color-primary-hover);
+}
+
+textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+

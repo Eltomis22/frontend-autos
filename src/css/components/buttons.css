@@ -1,0 +1,94 @@
+/* ==========================================================
+   components/buttons.css — todos los estilos de .btn y variantes.
+   ========================================================== */
+
+/* ---------- Buttons ---------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.78rem 1.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.93rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+    letter-spacing: 0.005em;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.15);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.18);
+}
+
+.btn-secondary {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border-strong);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-surface-3);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-accent {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.btn-accent:hover {
+    background-color: var(--color-primary-hover);
+    color: #ffffff;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background-color: #991b1b;
+    color: #ffffff;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--color-text-muted);
+}
+
+.btn-ghost:hover {
+    background-color: var(--color-surface-3);
+    color: var(--color-text);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.btn-sm {
+    padding: 0.48rem 0.95rem;
+    font-size: 0.85rem;
+}
+
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+

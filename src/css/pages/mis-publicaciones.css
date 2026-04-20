@@ -1,0 +1,93 @@
+/* ==========================================================
+   pages/mis-publicaciones.css — grilla editable del vendedor.
+   ========================================================== */
+
+/* ---------- Mis publicaciones (grilla del vendedor) ---------- */
+.publicaciones-grid {
+    display: grid;
+    gap: 1.3rem;
+    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.publicacion-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
+}
+
+.publicacion-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+}
+
+.publicacion-image {
+    aspect-ratio: 16 / 10;
+    background: var(--color-surface-3);
+    overflow: hidden;
+    position: relative;
+}
+
+.publicacion-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.publicacion-image .no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+}
+
+.publicacion-body {
+    padding: 1.2rem 1.3rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    flex: 1;
+}
+
+.publicacion-title {
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 1.08rem;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.publicacion-meta {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.publicacion-price {
+    color: var(--color-text);
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.01em;
+}
+
+.publicacion-actions {
+    display: flex;
+    gap: 0.6rem;
+    padding: 1rem 1.3rem 1.2rem;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+}
+
+.publicacion-actions .btn {
+    flex: 1;
+}
+

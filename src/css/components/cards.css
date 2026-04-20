@@ -1,0 +1,45 @@
+/* ==========================================================
+   components/cards.css — tarjetas base (.card) y variantes.
+   ========================================================== */
+
+/* ---------- Cards ---------- */
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.card-body {
+    padding: 2.2rem;
+    position: relative;
+}
+
+.card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+}
+
+.card-header h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.card-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+}
+
+.card-subtitle {
+    color: var(--color-text-muted);
+    margin-bottom: 1.8rem;
+    font-size: 0.96rem;
+}
+

@@ -1,0 +1,19 @@
+/* ==========================================================
+   base/utilities.css — helpers globales (.text-center, .flex-row,
+   .gap-*, etc.) reutilizables en cualquier vista.
+   ========================================================== */
+
+/* ---------- Utilities ---------- */
+.text-center { text-align: center; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.hidden { display: none !important; }
+
+.flex-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+

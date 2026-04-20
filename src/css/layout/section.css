@@ -1,0 +1,45 @@
+/* ==========================================================
+   layout/section.css — títulos de sección (.section-title,
+   .section-subtitle, .section-header).
+   ========================================================== */
+
+/* ---------- Sections ---------- */
+.section-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+}
+
+.section-subtitle {
+    color: var(--color-text-muted);
+    margin-bottom: 2.5rem;
+    font-size: 1.05rem;
+    max-width: 640px;
+}
+
+
+/* ---------- Section header (título + acción a la derecha) ---------- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.2rem;
+    margin-bottom: 1.6rem;
+    flex-wrap: wrap;
+}
+
+.section-header .section-title {
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .section-header {
+        align-items: stretch;
+    }
+    .section-header .btn {
+        align-self: flex-start;
+    }
+}
+

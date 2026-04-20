@@ -1,0 +1,147 @@
+/* ==========================================================
+   pages/consultas.css — bandeja del vendedor (consultas.html).
+   ========================================================== */
+
+/* ---------- Consultas (bandeja del vendedor) ---------- */
+.consultas-list {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 1rem;
+}
+
+.consulta-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.4rem 1.6rem;
+    box-shadow: var(--shadow-xs);
+    transition: all 0.2s ease;
+}
+
+.consulta-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-border-strong);
+}
+
+.consulta-card.is-new {
+    border-left: 3px solid var(--color-primary);
+}
+
+.consulta-card.is-read {
+    opacity: 0.78;
+}
+
+.consulta-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.consulta-vehiculo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.consulta-vehiculo-title {
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    letter-spacing: -0.01em;
+}
+
+.consulta-vehiculo-title:hover {
+    color: var(--color-primary);
+}
+
+.consulta-vehiculo-meta {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+}
+
+.consulta-badge {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.consulta-badge.pendiente {
+    background: var(--color-warning-soft);
+    color: var(--color-warning);
+    border: 1px solid rgba(180, 83, 9, 0.28);
+}
+
+.consulta-badge.leida {
+    background: var(--color-surface-3);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+}
+
+.consulta-body {
+    margin: 0.5rem 0 1rem;
+}
+
+.consulta-message {
+    color: var(--color-text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.consulta-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+}
+
+.consulta-comprador {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.consulta-comprador-name {
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.93rem;
+}
+
+.consulta-contact {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.15s ease;
+    word-break: break-all;
+}
+
+.consulta-contact:hover {
+    color: var(--color-primary);
+}
+
+.consulta-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.consulta-fecha {
+    font-size: 0.8rem;
+    color: var(--color-text-subtle);
+}
+
