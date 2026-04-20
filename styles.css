@@ -142,41 +142,48 @@ img {
 }
 
 .navbar-brand .logo-icon {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: block;
+    object-fit: cover;
     background: var(--color-surface-dark);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-size: 0.88rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
-    box-shadow: var(--shadow-sm);
+    box-shadow:
+        0 1px 2px rgba(15, 23, 42, 0.08),
+        0 10px 24px rgba(15, 23, 42, 0.18);
+    flex-shrink: 0;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.navbar-brand:hover .logo-icon {
+    transform: scale(1.04);
+    box-shadow:
+        0 2px 4px rgba(15, 23, 42, 0.12),
+        0 14px 30px rgba(15, 23, 42, 0.22);
 }
 
 .navbar-brand .brand-text {
     display: inline-flex;
     align-items: baseline;
-    gap: 0.4rem;
+    gap: 0.5rem;
     line-height: 1;
 }
 
 .navbar-brand .brand-name {
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.04em;
     color: var(--color-text);
-    font-size: 1.18rem;
+    font-size: 1.22rem;
+    text-transform: uppercase;
 }
 
 .navbar-brand .brand-sub {
     font-weight: 600;
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.24em;
     text-transform: uppercase;
     color: var(--color-text-muted);
-    padding-left: 0.5rem;
+    padding-left: 0.55rem;
     border-left: 1px solid var(--color-border-strong);
 }
 
@@ -294,17 +301,13 @@ main {
 }
 
 .auth-hero-mark .mark-badge {
-    width: 54px;
-    height: 54px;
-    border-radius: 12px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
     background: #ffffff;
-    color: var(--color-surface-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 1.05rem;
-    letter-spacing: 0.08em;
+    display: block;
+    object-fit: cover;
+    padding: 3px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
@@ -318,7 +321,8 @@ main {
 .auth-hero-mark .mark-text strong {
     font-size: 1.35rem;
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
 }
 
 .auth-hero-mark .mark-text small {
@@ -1339,6 +1343,76 @@ textarea {
     line-height: 1.75;
 }
 
+/* ---------- Tarjeta del vendedor ---------- */
+.seller-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 1.3rem;
+    margin-bottom: 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+}
+
+.seller-card .seller-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--color-surface-dark);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.seller-card .seller-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.seller-card .seller-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+.seller-card .seller-name {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    word-break: break-word;
+}
+
+.seller-card .seller-meta {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+}
+
+.seller-card .seller-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.08);
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
 /* ---------- Valoración / panel técnico ---------- */
 .ia-panel,
 .value-panel {
@@ -1588,17 +1662,15 @@ textarea {
 }
 
 .footer-logo {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     background: #ffffff;
-    color: var(--color-surface-dark);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+    object-fit: cover;
+    padding: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    vertical-align: middle;
 }
 
 .site-footer ul {

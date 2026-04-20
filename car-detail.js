@@ -79,6 +79,8 @@ function displayCarDetail(car, ia) {
                         <p>${escapeHtml(car.descripcion)}</p>
                     </div>` : ''}
 
+                ${renderSellerCard(car.vendedor)}
+
                 ${renderIaPanel(ia)}
 
                 <div class="card">
@@ -142,6 +144,33 @@ function displayCarDetail(car, ia) {
     });
 }
 
+function renderSellerCard(vendedor) {
+    if (!vendedor) return '';
+    const nombre = (vendedor.nombre || '').trim() || 'Vendedor particular';
+    const iniciales = nombre
+        .split(/\s+/)
+        .map((p) => p.charAt(0).toUpperCase())
+        .filter(Boolean)
+        .slice(0, 2)
+        .join('') || 'V';
+    const fecha = vendedor.fechaCreacion ? new Date(vendedor.fechaCreacion) : null;
+    const anioMiembro = fecha && !isNaN(fecha.getTime()) ? fecha.getFullYear() : null;
+    const meta = anioMiembro
+        ? `Miembro desde ${anioMiembro}`
+        : 'Publicado por un vendedor verificado';
+
+    return `
+        <div class="seller-card">
+            <div class="seller-avatar" aria-hidden="true">${escapeHtml(iniciales)}</div>
+            <div class="seller-body">
+                <span class="seller-label">Publicado por</span>
+                <span class="seller-name">${escapeHtml(nombre)}</span>
+                <span class="seller-meta">${escapeHtml(meta)}</span>
+            </div>
+            <span class="seller-badge">Vendedor</span>
+        </div>`;
+}
+
 function spec(label, value) {
     return `
         <div class="spec-item">
@@ -155,7 +184,7 @@ function renderIaPanel(ia) {
         return `
             <div class="ia-panel">
                 <div class="ia-panel-header">
-                    <span class="ia-badge">Cato Group</span>
+                    <span class="ia-badge">CATO Group</span>
                     <h3>Valoración del vehículo</h3>
                 </div>
                 <p style="color: var(--color-text-muted); font-size: 0.95rem;">
@@ -178,7 +207,7 @@ function renderIaPanel(ia) {
     return `
         <div class="ia-panel">
             <div class="ia-panel-header">
-                <span class="ia-badge">Cato Group</span>
+                <span class="ia-badge">CATO Group</span>
                 <h3>Valoración del vehículo</h3>
             </div>
             <div class="ia-status ${clase}">Estado: ${escapeHtml(ia.estadoGeneral || 'a consultar')}</div>

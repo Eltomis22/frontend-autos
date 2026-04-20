@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="CATO Group">
+    <defs>
+        <linearGradient id="catoGroupBg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#152238"/>
+            <stop offset="100%" stop-color="#0a101c"/>
+        </linearGradient>
+    </defs>
+    <circle cx="120" cy="120" r="120" fill="url(#catoGroupBg)"/>
+    <!-- Monograma CT fusionado -->
+    <g fill="#ffffff">
+        <!-- Letra C: arco abierto a la derecha, con doble corte -->
+        <path d="M 118 66
+                 H 90
+                 C 68 66 52 90 52 120
+                 C 52 150 68 174 90 174
+                 H 118
+                 V 154
+                 H 95
+                 C 82 154 71 142 71 120
+                 C 71 98 82 86 95 86
+                 H 118
+                 Z"/>
+        <!-- Letra T: barra superior + mástil central, compartiendo el trazo con la C -->
+        <path d="M 114 66
+                 H 196
+                 V 86
+                 H 168
+                 V 174
+                 H 148
+                 V 86
+                 H 114
+                 Z"/>
+    </g>
+    <!-- Acento diagonal sutil arriba a la izquierda, estilo deportivo -->
+    <path d="M 58 58 L 82 58 L 68 72 L 44 72 Z" fill="#ffffff" opacity="0.08"/>
+</svg>
