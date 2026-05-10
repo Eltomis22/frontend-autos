@@ -26,23 +26,16 @@ async function loadCarDetail(id) {
 }
 
 function renderError(msg) {
-    document.getElementById('carDetail').innerHTML = `
-        <div class="empty-state">
-            <div class="empty-icon">⚠️</div>
-            <h3>No se pudo cargar el vehículo</h3>
-            <p>${msg}</p>
-        </div>`;
-}
-
-function extractImagenes(car) {
-    if (!Array.isArray(car.imagenes)) return [];
-    return car.imagenes
-        .map(i => typeof i === 'string' ? i : i?.urlImagen)
-        .filter(Boolean);
+    document.getElementById('carDetail').innerHTML = Components.emptyState({
+        icon: '⚠️',
+        title: 'No se pudo cargar el vehículo',
+        message: msg,
+    });
 }
 
 function displayCarDetail(car, ia) {
-    const imagenes = extractImagenes(car);
+    // Components.imageUrls reemplaza la antigua extractImagenes local.
+    const imagenes = Components.imageUrls(car);
     const mainImg = imagenes[0] || '';
 
     const container = document.getElementById('carDetail');

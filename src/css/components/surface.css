@@ -1,0 +1,79 @@
+/* ==========================================================
+   components/surface.css — primitivas reutilizables compartidas
+   por todas las "tarjetas" del sitio.
+
+   Antes cada CSS de página repetía las mismas declaraciones de
+   `background`, `border`, `transition` y hover de tarjeta. Acá
+   se centralizan en selectores agrupados que abarcan tanto la
+   clase pública nueva (.surface-card) como los nombres legados
+   por página (.account-card, .car-card, etc.). Así no hace falta
+   tocar HTML/JS y se mantiene una única fuente de verdad para
+   los rasgos visuales comunes.
+   ========================================================== */
+
+/* ---------- Superficie de tarjeta clara ----------
+   Fondo + borde unificados. El radius y la sombra siguen siendo
+   por-clase porque varían intencionalmente entre cards. */
+.surface-card,
+.account-card,
+.publicacion-card,
+.consulta-card,
+.car-card,
+.feature-card,
+.filters-bar,
+.seller-card,
+.detail-specs,
+.detail-description,
+.ia-panel,
+.value-panel,
+.compare-table {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+}
+
+/* ---------- Card hoverable ("lift" al pasar el mouse) ----------
+   Transición y cambio de color de borde compartidos. La altura
+   exacta del lift y la sombra final siguen siendo por-clase. */
+.surface-card--hoverable,
+.publicacion-card,
+.consulta-card,
+.car-card,
+.feature-card {
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        border-color var(--transition);
+}
+
+.surface-card--hoverable:hover,
+.publicacion-card:hover,
+.consulta-card:hover,
+.car-card:hover,
+.feature-card:hover {
+    border-color: var(--color-border-strong);
+}
+
+/* ---------- Eyebrow label ----------
+   Etiqueta tipo "all-caps" con tracking. Disponible para nuevo
+   código que la quiera consumir directamente. */
+.eyebrow-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+}
+
+/* ---------- Pill / chip redondeada ----------
+   Píldora circular para badges, tags y status. */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}

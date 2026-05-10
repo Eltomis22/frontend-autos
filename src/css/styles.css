@@ -37,6 +37,7 @@
 
 /* ---------- Components ---------- */
 @import url('components/buttons.css');
+@import url('components/surface.css');
 @import url('components/cards.css');
 @import url('components/forms.css');
 @import url('components/alerts.css');
@@ -53,6 +54,7 @@
 @import url('pages/consultas.css');
 @import url('pages/mis-publicaciones.css');
 @import url('pages/mi-cuenta.css');
+@import url('pages/publish.css');
 
 /* ---------- Responsive (último para ganar cascada) ---------- */
 @import url('base/responsive.css');

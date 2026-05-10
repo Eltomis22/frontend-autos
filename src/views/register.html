@@ -12,18 +12,8 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="../../index.html" class="navbar-brand">
-                <img class="logo-icon" src="../assets/logo.svg" alt="" aria-hidden="true">
-                <span class="brand-text">
-                    <span class="brand-name">CATO</span><span class="brand-sub">Group</span>
-                </span>
-            </a>
-            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
-            <ul class="navbar-menu" id="navbarMenu"></ul>
-        </div>
-    </nav>
+    <!-- Header inyectado desde partials/header.html por layout.js -->
+    <div data-include="header"></div>
 
     <main>
         <section class="auth-split">
@@ -99,6 +89,12 @@
     </main>
 
     <script src="../js/app.js"></script>
+    <script src="../js/layout.js"></script>
     <script src="../js/register.js"></script>
+    <script>
+        // Register no usa el footer global (tiene su propio auth-hero-foot),
+        // pero igual reutiliza el header común vía Layout.init.
+        document.addEventListener('DOMContentLoaded', () => Layout.init('register'));
+    </script>
 </body>
 </html>

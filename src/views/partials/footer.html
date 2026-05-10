@@ -1,0 +1,47 @@
+<!--
+    partials/footer.html — pie de página reutilizable.
+    Se inyecta desde src/js/layout.js. Los placeholders se reemplazan en
+    runtime según la página actual:
+      - {{INDEX}}          → ruta a index.html
+      - {{ASSETS}}         → ruta a src/assets
+      - {{LINK_CARS}}      → ruta a la vista cars.html
+      - {{LINK_PUBLISH}}   → ruta a la vista publish.html
+      - {{LINK_LOGIN}}     → ruta a la vista login.html
+      - {{LINK_REGISTER}}  → ruta a la vista register.html
+-->
+<footer class="site-footer">
+    <div class="site-footer-content">
+        <div>
+            <h4>
+                <img class="footer-logo" src="{{ASSETS}}/logo.svg" alt="" aria-hidden="true">
+                CATO Group
+            </h4>
+            <p class="site-footer-tagline">
+                Agencia Multimarca · Compraventa de usados seleccionados y 0km.
+                Asesoramiento, financiación y consignación bajo un mismo techo.
+            </p>
+            <p class="site-footer-note">
+                Sitio desarrollado como Trabajo Práctico de Ingeniería Web II (UNDEF, 2026).
+            </p>
+        </div>
+        <div>
+            <h4>Navegación</h4>
+            <ul>
+                <li><a href="{{INDEX}}">Inicio</a></li>
+                <li><a href="{{LINK_CARS}}">Buscar vehículos</a></li>
+                <li><a href="{{LINK_PUBLISH}}">Publicar vehículo</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Contacto</h4>
+            <ul>
+                <li><a href="https://www.instagram.com/cato.group/" target="_blank" rel="noopener">Instagram @cato.group</a></li>
+                <li><a href="{{LINK_LOGIN}}">Iniciar sesión</a></li>
+                <li><a href="{{LINK_REGISTER}}">Registrarse</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="site-footer-bottom">
+        &copy; 2026 CATO Group — Agencia Multimarca
+    </div>
+</footer>

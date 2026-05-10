@@ -10,21 +10,20 @@
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
+/* `background`, `border`, `transition` y `border-color:hover` los
+   aporta components/surface.css (.publicacion-card está incluida
+   en el grupo de surface-card hoverable). */
 .publicacion-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-xs);
-    transition: all 0.2s ease;
 }
 
 .publicacion-card:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-md);
-    border-color: var(--color-border-strong);
 }
 
 .publicacion-image {

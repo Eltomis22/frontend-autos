@@ -5,13 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cars = JSON.parse(localStorage.getItem('compareCars') || '[]');
     if (cars.length < 2) {
-        document.querySelector('main .container').innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">⚖️</div>
-                <h3>No hay vehículos para comparar</h3>
-                <p>Volvé al catálogo, seleccioná al menos 2 autos y hacé clic en <em>Comparar</em>.</p>
-                <a href="cars.html" class="btn btn-primary mt-2">Ir al catálogo</a>
-            </div>`;
+        document.querySelector('main .container').innerHTML = Components.emptyState({
+            icon: '⚖️',
+            title: 'No hay vehículos para comparar',
+            message: 'Volvé al catálogo, seleccioná al menos 2 autos y hacé clic en Comparar.',
+            action: '<a href="cars.html" class="btn btn-primary">Ir al catálogo</a>',
+        });
         return;
     }
 

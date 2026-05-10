@@ -10,9 +10,8 @@
     margin-top: 1rem;
 }
 
+/* `background` y `border` los aporta components/surface.css. */
 .account-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 1.8rem;
     box-shadow: var(--shadow-sm);

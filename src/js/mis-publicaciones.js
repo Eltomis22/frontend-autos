@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     if (Auth.getRol() !== 'vendedor') {
-        document.getElementById('publicacionesContainer').innerHTML = `
-            <div class="empty-state" style="grid-column: 1 / -1;">
-                <div class="empty-icon">🔒</div>
-                <h3>Sección exclusiva para vendedores</h3>
-                <p>Convertite en vendedor para publicar y administrar tus vehículos.</p>
-            </div>`;
+        document.getElementById('publicacionesContainer').innerHTML = Components.emptyState({
+            icon: '🔒',
+            title: 'Sección exclusiva para vendedores',
+            message: 'Convertite en vendedor para publicar y administrar tus vehículos.',
+            fullSpan: true,
+        });
         return;
     }
 
@@ -26,13 +26,13 @@ async function loadPublicaciones() {
     try {
         const vehiculos = await apiCall('/vehiculos/mios');
         if (!Array.isArray(vehiculos) || vehiculos.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state" style="grid-column: 1 / -1;">
-                    <div class="empty-icon">🚗</div>
-                    <h3>Todavía no publicaste ningún vehículo</h3>
-                    <p>Subí tu primera unidad y empezá a recibir consultas en minutos.</p>
-                    <a href="publish.html" class="btn btn-primary" style="margin-top: 1rem;">Publicar ahora</a>
-                </div>`;
+            container.innerHTML = Components.emptyState({
+                icon: '🚗',
+                title: 'Todavía no publicaste ningún vehículo',
+                message: 'Subí tu primera unidad y empezá a recibir consultas en minutos.',
+                action: '<a href="publish.html" class="btn btn-primary">Publicar ahora</a>',
+                fullSpan: true,
+            });
             return;
         }
         container.innerHTML = vehiculos.map(renderPublicacion).join('');
@@ -44,20 +44,23 @@ async function loadPublicaciones() {
         });
     } catch (err) {
         console.error('Error cargando publicaciones:', err);
-        container.innerHTML = `
-            <div class="empty-state" style="grid-column: 1 / -1;">
-                <div class="empty-icon">⚠️</div>
-                <h3>No pudimos cargar tus publicaciones</h3>
-                <p>${escapeHtml(err.message)}</p>
-            </div>`;
+        container.innerHTML = Components.emptyState({
+            icon: '⚠️',
+            title: 'No pudimos cargar tus publicaciones',
+            message: err.message,
+            fullSpan: true,
+        });
     }
 }
 
+/**
+ * Tarjeta de "mi publicación" del vendedor. Es similar a Components.carCard
+ * pero con acciones propias (Ver / Editar / Eliminar), por eso vive acá.
+ * Usamos Components.primaryImage para no duplicar la lógica de fotos.
+ */
 function renderPublicacion(v) {
-    const imagenes = Array.isArray(v.imagenes)
-        ? v.imagenes.map(i => (typeof i === 'string' ? i : i?.urlImagen)).filter(Boolean)
-        : [];
-    const foto = imagenes[0];
+    const foto = Components.primaryImage(v);
+    const detailHref = `${route('car-detail')}?id=${encodeURIComponent(v.idVehiculo)}`;
     return `
         <article class="publicacion-card">
             <div class="publicacion-image">
@@ -72,7 +75,7 @@ function renderPublicacion(v) {
                 <span class="publicacion-price">${formatPrice(v.precio)}</span>
             </div>
             <div class="publicacion-actions">
-                <a href="car-detail.html?id=${encodeURIComponent(v.idVehiculo)}" class="btn btn-ghost btn-sm">Ver</a>
+                <a href="${detailHref}" class="btn btn-ghost btn-sm">Ver</a>
                 <button class="btn btn-primary btn-sm" data-edit="${escapeHtml(v.idVehiculo)}">Editar</button>
                 <button class="btn btn-ghost btn-sm" data-delete="${escapeHtml(v.idVehiculo)}" style="color: var(--color-danger, #f87171);">Eliminar</button>
             </div>

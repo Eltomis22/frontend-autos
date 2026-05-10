@@ -68,6 +68,19 @@
     line-height: 1.65;
 }
 
+/* Bajada principal del footer (texto descriptivo bajo el logo). */
+.site-footer-tagline {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Línea fina debajo de la bajada (créditos, atribución, etc.). */
+.site-footer-note {
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    opacity: 0.75;
+}
+
 .site-footer-bottom {
     max-width: var(--max-width);
     margin: 0 auto;

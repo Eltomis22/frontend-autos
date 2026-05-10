@@ -12,18 +12,8 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="../../index.html" class="navbar-brand">
-                <img class="logo-icon" src="../assets/logo.svg" alt="" aria-hidden="true">
-                <span class="brand-text">
-                    <span class="brand-name">CATO</span><span class="brand-sub">Group</span>
-                </span>
-            </a>
-            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
-            <ul class="navbar-menu" id="navbarMenu"></ul>
-        </div>
-    </nav>
+    <!-- Header inyectado desde partials/header.html por layout.js -->
+    <div data-include="header"></div>
 
     <main>
         <div class="container">
@@ -41,14 +31,16 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="site-footer-bottom">
-            &copy; 2026 CATO Group — Agencia Multimarca
-        </div>
-    </footer>
+    <!-- Footer inyectado desde partials/footer.html por layout.js -->
+    <div data-include="footer"></div>
 
     <script src="../js/app.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/components.js"></script>
     <script src="../js/consultas-thread.js"></script>
     <script src="../js/consultas.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => Layout.init('consultas'));
+    </script>
 </body>
 </html>

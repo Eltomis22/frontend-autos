@@ -1,0 +1,20 @@
+<!--
+    partials/header.html — barra de navegación reutilizable.
+    Se inyecta desde src/js/layout.js. Los placeholders {{INDEX}} y
+    {{ASSETS}} se reemplazan en runtime según la página actual:
+      - {{INDEX}}  → ruta a index.html relativa a la página actual
+      - {{ASSETS}} → ruta a la carpeta src/assets relativa a la página actual
+    El <ul id="navbarMenu"> se completa luego con renderNavbar() de app.js.
+-->
+<nav class="navbar">
+    <div class="navbar-container">
+        <a href="{{INDEX}}" class="navbar-brand">
+            <img class="logo-icon" src="{{ASSETS}}/logo.svg" alt="" aria-hidden="true">
+            <span class="brand-text">
+                <span class="brand-name">CATO</span><span class="brand-sub">Group</span>
+            </span>
+        </a>
+        <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
+        <ul class="navbar-menu" id="navbarMenu"></ul>
+    </div>
+</nav>

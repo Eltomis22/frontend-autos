@@ -12,18 +12,8 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="../../index.html" class="navbar-brand">
-                <img class="logo-icon" src="../assets/logo.svg" alt="" aria-hidden="true">
-                <span class="brand-text">
-                    <span class="brand-name">CATO</span><span class="brand-sub">Group</span>
-                </span>
-            </a>
-            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
-            <ul class="navbar-menu" id="navbarMenu"></ul>
-        </div>
-    </nav>
+    <!-- Header inyectado desde partials/header.html por layout.js -->
+    <div data-include="header"></div>
 
     <main>
         <div class="container" style="max-width: 780px;">
@@ -95,9 +85,25 @@
 
                         <h3 style="margin: 1.5rem 0 1rem; font-size: 1.05rem;">Fotografías</h3>
                         <div class="form-group">
-                            <label for="imagenes">Imágenes del vehículo</label>
-                            <input type="file" id="imagenes" multiple accept="image/*">
-                            <p class="form-hint">Podés subir varias imágenes. Las fotos se utilizan para generar la valoración técnica del vehículo.</p>
+                            <label>Imágenes del vehículo</label>
+
+                            <!-- Grid de thumbnails: las pobla publish.js a partir
+                                 de selectedPhotos[]. Vacío al inicio. -->
+                            <div id="photosGrid" class="photos-grid" aria-live="polite"></div>
+
+                            <!-- Botón visible que dispara el input oculto.
+                                 Hacemos así para poder agregar fotos en varios
+                                 pasos sin que el navegador reemplace la selección
+                                 anterior. -->
+                            <button type="button" class="btn btn-ghost" id="addPhotosBtn">
+                                + Agregar fotos
+                            </button>
+                            <input type="file" id="imagenes" multiple accept="image/*" hidden>
+
+                            <p class="form-hint">
+                                Podés agregar fotos en distintos pasos. Arrastrá las miniaturas para
+                                reordenarlas — la primera se usa como portada.
+                            </p>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block" id="submitBtn">Publicar vehículo</button>
@@ -107,13 +113,14 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="site-footer-bottom">
-            &copy; 2026 CATO Group — Agencia Multimarca
-        </div>
-    </footer>
+    <!-- Footer inyectado desde partials/footer.html por layout.js -->
+    <div data-include="footer"></div>
 
     <script src="../js/app.js"></script>
+    <script src="../js/layout.js"></script>
     <script src="../js/publish.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => Layout.init('publish'));
+    </script>
 </body>
 </html>

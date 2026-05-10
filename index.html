@@ -12,18 +12,8 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="navbar-container">
-            <a href="index.html" class="navbar-brand">
-                <img class="logo-icon" src="src/assets/logo.svg" alt="" aria-hidden="true">
-                <span class="brand-text">
-                    <span class="brand-name">CATO</span><span class="brand-sub">Group</span>
-                </span>
-            </a>
-            <button class="navbar-toggle" id="navbarToggle" aria-label="Abrir menú">☰</button>
-            <ul class="navbar-menu" id="navbarMenu"></ul>
-        </div>
-    </nav>
+    <!-- Header inyectado desde src/views/partials/header.html por layout.js -->
+    <div data-include="header"></div>
 
     <main>
         <section class="hero">
@@ -148,47 +138,16 @@
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="site-footer-content">
-            <div>
-                <h4>
-                    <img class="footer-logo" src="src/assets/logo.svg" alt="" aria-hidden="true">
-                    CATO Group
-                </h4>
-                <p style="font-size: 0.9rem; line-height: 1.6;">
-                    Agencia Multimarca · Compraventa de usados seleccionados y 0km.
-                    Asesoramiento, financiación y consignación bajo un mismo techo.
-                </p>
-                <p style="font-size: 0.85rem; margin-top: 0.8rem; opacity: 0.75;">
-                    Sitio desarrollado como Trabajo Práctico de Ingeniería Web II (UNDEF, 2026).
-                </p>
-            </div>
-            <div>
-                <h4>Navegación</h4>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="src/views/cars.html">Buscar vehículos</a></li>
-                    <li><a href="src/views/publish.html">Publicar vehículo</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4>Contacto</h4>
-                <ul>
-                    <li><a href="https://www.instagram.com/cato.group/" target="_blank" rel="noopener">Instagram @cato.group</a></li>
-                    <li><a href="src/views/login.html">Iniciar sesión</a></li>
-                    <li><a href="src/views/register.html">Registrarse</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="site-footer-bottom">
-            &copy; 2026 CATO Group — Agencia Multimarca
-        </div>
-    </footer>
+    <!-- Footer inyectado desde src/views/partials/footer.html por layout.js -->
+    <div data-include="footer"></div>
 
     <script src="src/js/app.js"></script>
+    <script src="src/js/layout.js"></script>
+    <script src="src/js/components.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            renderNavbar('home');
+            // Inyecta header y footer reutilizables, y marca el link activo del navbar.
+            Layout.init('home');
             adaptHeroCta();
             loadLatestCars();
         });
@@ -219,7 +178,7 @@
                 const lista = Array.isArray(cars) ? cars : [];
 
                 // Destacados del hero: priorizamos los que tienen foto, hasta 5.
-                heroSlides = lista.filter(primeraFoto).slice(0, 5);
+                heroSlides = lista.filter(Components.primaryImage).slice(0, 5);
                 if (heroSlides.length === 0 && lista.length > 0) {
                     heroSlides = [lista[0]]; // fallback: al menos uno, aunque no tenga foto
                 }
@@ -227,30 +186,24 @@
 
                 const latest = lista.slice(0, 6);
                 if (latest.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🚗</div>
-                            <h3>Todavía no hay vehículos publicados</h3>
-                            <p>Volvé pronto: estamos sumando nuevas unidades al catálogo.</p>
-                        </div>`;
+                    container.innerHTML = Components.emptyState({
+                        icon: '🚗',
+                        title: 'Todavía no hay vehículos publicados',
+                        message: 'Volvé pronto: estamos sumando nuevas unidades al catálogo.',
+                    });
                     return;
                 }
-                container.innerHTML = `<div class="cars-grid">${latest.map(renderLatestCard).join('')}</div>`;
+                // La card de "última publicación" es la misma que en el catálogo
+                // pero sin checkbox de comparación.
+                container.innerHTML = `<div class="cars-grid">${latest.map((car) => Components.carCard(car)).join('')}</div>`;
             } catch (err) {
                 console.error('Error cargando últimas publicaciones:', err);
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">⚠️</div>
-                        <h3>No pudimos cargar los vehículos destacados</h3>
-                        <p>${escapeHtml(err.message)}</p>
-                    </div>`;
+                container.innerHTML = Components.emptyState({
+                    icon: '⚠️',
+                    title: 'No pudimos cargar los vehículos destacados',
+                    message: err.message,
+                });
             }
-        }
-
-        function primeraFoto(car) {
-            if (!Array.isArray(car?.imagenes) || !car.imagenes.length) return '';
-            const first = car.imagenes[0];
-            return typeof first === 'string' ? first : (first?.urlImagen || '');
         }
 
         function initHeroSlider() {
@@ -311,7 +264,7 @@
         }
 
         function renderHeroFeatured(car) {
-            const foto = primeraFoto(car);
+            const foto = Components.primaryImage(car);
             const card = document.getElementById('heroFeaturedCard');
             const img = document.getElementById('heroFeaturedImg');
             const placeholder = document.getElementById('heroFeaturedPlaceholder');
@@ -319,7 +272,7 @@
             const meta = document.getElementById('heroFeaturedMeta');
             const price = document.getElementById('heroFeaturedPrice');
 
-            card.href = `car-detail.html?id=${encodeURIComponent(car.idVehiculo)}`;
+            card.href = `${route('car-detail')}?id=${encodeURIComponent(car.idVehiculo)}`;
 
             if (foto) {
                 img.src = foto;
@@ -348,32 +301,8 @@
             price.textContent = car.precio != null ? formatPrice(car.precio) : 'Consultar precio';
         }
 
-        function renderLatestCard(car) {
-            const foto = Array.isArray(car.imagenes) && car.imagenes.length
-                ? (typeof car.imagenes[0] === 'string' ? car.imagenes[0] : car.imagenes[0]?.urlImagen)
-                : '';
-            return `
-                <article class="car-card">
-                    <div class="car-card-image">
-                        ${foto
-                            ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>Sin foto disponible</div>'">`
-                            : `<div class="no-image">Sin foto disponible</div>`}
-                        <span class="car-card-badge">Disponible</span>
-                    </div>
-                    <div class="car-card-body">
-                        <h3 class="car-card-title">${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h3>
-                        <div class="car-card-meta">
-                            <span>📅 ${car.anio || '—'}</span>
-                            ${car.kilometraje != null ? `<span>🛣️ ${formatKm(car.kilometraje)}</span>` : ''}
-                            ${car.ubicacion ? `<span>📍 ${escapeHtml(car.ubicacion)}</span>` : ''}
-                        </div>
-                        <div class="car-card-price">${formatPrice(car.precio)}</div>
-                        <div class="car-card-actions">
-                            <a href="src/views/car-detail.html?id=${encodeURIComponent(car.idVehiculo)}" class="btn btn-primary btn-block">Ver detalles</a>
-                        </div>
-                    </div>
-                </article>`;
-        }
+        // renderLatestCard() vivía acá; ahora usamos Components.carCard()
+        // arriba, dentro de loadLatestCars(). Se eliminó la duplicación.
     </script>
 </body>
 </html>

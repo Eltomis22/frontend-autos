@@ -9,19 +9,17 @@
     margin-top: 1rem;
 }
 
+/* `background`, `border`, `transition` y `border-color:hover` los
+   aporta components/surface.css. */
 .consulta-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: 1.4rem 1.6rem;
     box-shadow: var(--shadow-xs);
-    transition: all 0.2s ease;
 }
 
 .consulta-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    border-color: var(--color-border-strong);
 }
 
 .consulta-card.is-new {

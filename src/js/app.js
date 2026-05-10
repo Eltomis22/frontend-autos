@@ -232,7 +232,12 @@ function eyeIcon(visible) {
         : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
-/* ---------- Init navbar y password toggles automáticamente ---------- */
+/* ---------- Init navbar y password toggles automáticamente ----------
+   Si la página NO usa layout.js (Layout.init), igual queremos que el
+   navbar se renderice y los password toggles se enganchen. Layout.init
+   también vuelve a llamar a estas funciones después de inyectar el
+   header — son idempotentes así que no pasa nada con la doble llamada.
+-------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
     const menu = document.getElementById('navbarMenu');
     if (menu && !menu.innerHTML.trim()) {

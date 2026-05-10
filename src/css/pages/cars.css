@@ -4,9 +4,8 @@
    ========================================================== */
 
 /* ---------- Filters bar ---------- */
+/* `background` y `border` los aporta components/surface.css. */
 .filters-bar {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     padding: 1.6rem;
     margin-bottom: 2rem;
@@ -58,12 +57,11 @@
     gap: 1.6rem;
 }
 
+/* `background`, `border`, `transition` y `border-color:hover` los
+   aporta components/surface.css. */
 .car-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     overflow: hidden;
-    transition: all var(--transition);
     display: flex;
     flex-direction: column;
     position: relative;
@@ -73,7 +71,6 @@
 .car-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--color-border-strong);
 }
 
 .car-card-image {

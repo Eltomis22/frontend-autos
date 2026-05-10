@@ -21,59 +21,39 @@ async function loadMisConsultas() {
     try {
         const consultas = await apiCall('/consultas/mias');
         if (!Array.isArray(consultas) || consultas.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">💬</div>
-                    <h3>Todavía no enviaste ninguna consulta</h3>
-                    <p>Desde la ficha de cada vehículo podés consultar al vendedor. Las conversaciones van a aparecer acá.</p>
-                    <div style="margin-top: 1.2rem;">
-                        <a href="cars.html" class="btn btn-primary">Ver catálogo</a>
-                    </div>
-                </div>`;
+            container.innerHTML = Components.emptyState({
+                icon: '💬',
+                title: 'Todavía no enviaste ninguna consulta',
+                message: 'Desde la ficha de cada vehículo podés consultar al vendedor. Las conversaciones van a aparecer acá.',
+                action: '<a href="cars.html" class="btn btn-primary">Ver catálogo</a>',
+            });
             return;
         }
         container.innerHTML = consultas.map(renderConsulta).join('');
         attachHandlers(container);
     } catch (err) {
         console.error('Error cargando mis consultas:', err);
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">⚠️</div>
-                <h3>No se pudieron cargar tus consultas</h3>
-                <p>${escapeHtml(err.message)}</p>
-            </div>`;
+        container.innerHTML = Components.emptyState({
+            icon: '⚠️',
+            title: 'No se pudieron cargar tus consultas',
+            message: err.message,
+        });
     }
 }
 
+/**
+ * Card de consulta para el COMPRADOR. Compone Components.consultaCard
+ * con un único pedazo específico: el badge "Respondida/Esperando" según
+ * si el vendedor ya contestó. No lleva footer.
+ */
 function renderConsulta(c) {
-    const vehiculo = c.vehiculo || {};
-    const vehiculoTitle = `${escapeHtml(vehiculo.marca || '')} ${escapeHtml(vehiculo.modelo || '')}`.trim() || 'Vehículo';
-    const vehiculoSubtitle = [
-        vehiculo.anio ? `Año ${vehiculo.anio}` : null,
-        vehiculo.precio != null ? formatPrice(vehiculo.precio) : null,
-    ].filter(Boolean).join(' · ');
-
-    // Para el comprador, el "estado" útil es: ¿el vendedor ya me respondió?
     const respuestas = Array.isArray(c.respuestas) ? c.respuestas : [];
     const respuestaVendedor = respuestas.some((r) => r.autor?.rol === 'vendedor');
-    const estadoBadge = respuestaVendedor
+    const badge = respuestaVendedor
         ? `<span class="consulta-badge leida">Respondida</span>`
         : `<span class="consulta-badge pendiente">Esperando respuesta</span>`;
 
-    return `
-        <article class="consulta-card ${respuestaVendedor ? 'is-read' : 'is-new'}" data-consulta-id="${escapeHtml(c.idConsulta)}">
-            <header class="consulta-header">
-                <div class="consulta-vehiculo">
-                    <a href="car-detail.html?id=${encodeURIComponent(vehiculo.idVehiculo)}" class="consulta-vehiculo-title">${vehiculoTitle}</a>
-                    ${vehiculoSubtitle ? `<span class="consulta-vehiculo-meta">${vehiculoSubtitle}</span>` : ''}
-                </div>
-                ${estadoBadge}
-            </header>
-
-            ${renderThreadTimeline(c, currentUser.idUsuario)}
-
-            ${renderReplyForm(c.idConsulta)}
-        </article>`;
+    return Components.consultaCard(c, { isResolved: respuestaVendedor, badge });
 }
 
 function attachHandlers(container) {
