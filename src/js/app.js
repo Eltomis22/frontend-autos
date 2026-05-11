@@ -119,6 +119,7 @@ function renderNavbar(current = '') {
     }
 
     if (logged && rol === 'comprador') {
+        html += link(route('mis-favoritos'), 'Mis favoritos', 'mis-favoritos');
         html += link(route('mis-consultas'), 'Mis consultas', 'mis-consultas');
     }
 

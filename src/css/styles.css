@@ -45,6 +45,7 @@
 @import url('components/modal.css');
 @import url('components/password-toggle.css');
 @import url('components/thread.css');
+@import url('components/favorito.css');
 
 /* ---------- Pages ---------- */
 @import url('pages/home.css');

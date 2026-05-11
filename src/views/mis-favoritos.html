@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis favoritos — CATO Group</title>
+    <meta name="description" content="Vehículos que guardaste como favoritos en CATO Group.">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header inyectado desde partials/header.html por layout.js -->
+    <div data-include="header"></div>
+
+    <main>
+        <div class="container">
+            <h1 class="section-title">Mis favoritos</h1>
+            <p class="section-subtitle">Los vehículos que marcaste con ❤. Tocá el corazón para quitarlos de la lista.</p>
+
+            <div id="feedback"></div>
+
+            <section id="favoritosContainer"></section>
+        </div>
+    </main>
+
+    <!-- Footer inyectado desde partials/footer.html por layout.js -->
+    <div data-include="footer"></div>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/layout.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/mis-favoritos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => Layout.init('mis-favoritos'));
+    </script>
+</body>
+</html>

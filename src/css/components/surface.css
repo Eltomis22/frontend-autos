@@ -26,7 +26,10 @@
 .detail-description,
 .ia-panel,
 .value-panel,
-.compare-table {
+.compare-table,
+.cost-panel,
+.finance-panel,
+.historial-panel {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
 }

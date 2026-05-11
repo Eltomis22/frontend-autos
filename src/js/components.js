@@ -117,15 +117,21 @@ const Components = (() => {
      * Tarjeta completa de vehículo. Variantes:
      *   - withCheckbox: true → suma el checkbox de comparación (catálogo)
      *   - withBadge: true (default) → muestra el badge "Disponible"
+     *   - withFavorito: true → muestra un botón corazón. El estado inicial
+     *     se determina por `favoritoIds` (Set o array de ids favoritados).
+     *     El click dispara el evento `favorito:toggle` con detail.idVehiculo
+     *     en window — la página decide qué hacer con el toggle.
      *
      * El link "Ver detalles" usa route('car-detail') para resolver
      * automáticamente la ruta relativa correcta según la página actual.
      */
     function carCard(car, opts = {}) {
         const detailHref = `${route('car-detail')}?id=${encodeURIComponent(car.idVehiculo)}`;
+        const favoritoBtn = opts.withFavorito ? favoritoButton(car, opts.favoritoIds) : '';
         return `
             <article class="car-card">
                 ${carCardImage(car, opts)}
+                ${favoritoBtn}
                 <div class="car-card-body">
                     <h3 class="car-card-title">${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h3>
                     <div class="car-card-meta">${carMeta(car)}</div>
@@ -135,6 +141,23 @@ const Components = (() => {
                     </div>
                 </div>
             </article>`;
+    }
+
+    /** Botón ❤ que se monta en la esquina de la card. */
+    function favoritoButton(car, favoritoIds) {
+        const id = String(car.idVehiculo);
+        const set = favoritoIds instanceof Set
+            ? favoritoIds
+            : new Set((favoritoIds || []).map(String));
+        const activo = set.has(id);
+        return `
+            <button type="button"
+                    class="favorito-btn ${activo ? 'is-active' : ''}"
+                    data-favorito="${escapeHtml(id)}"
+                    aria-pressed="${activo}"
+                    aria-label="${activo ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
+                ${activo ? '❤️' : '🤍'}
+            </button>`;
     }
 
 
@@ -203,6 +226,7 @@ const Components = (() => {
         carMeta,
         carCardImage,
         carCard,
+        favoritoButton,
         consultaVehiculoHeader,
         consultaCard,
     };

@@ -15,10 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadCarDetail(id) {
     try {
         const car = await apiCall(`/vehiculos/${id}`);
-        let iaAnalysis = null;
-        try { iaAnalysis = await apiCall(`/ia/analizar/${id}`); }
-        catch { /* valoración opcional */ }
-        displayCarDetail(car, iaAnalysis);
+
+        // Estos cuatro fetches son OPCIONALES — si fallan no rompemos la
+        // página, simplemente no mostramos el panel correspondiente.
+        const [iaAnalysis, historial, duplicados, esFavorito] = await Promise.all([
+            apiCall(`/ia/analizar/${id}`).catch(() => null),
+            apiCall(`/vehiculos/${id}/historial-precio`).catch(() => []),
+            apiCall(`/vehiculos/${id}/duplicados`).catch(() => []),
+            (Auth.isLoggedIn() && Auth.getRol() === 'comprador')
+                ? apiCall('/favoritos/ids')
+                    .then((ids) => Array.isArray(ids) && ids.map(String).includes(String(id)))
+                    .catch(() => false)
+                : Promise.resolve(false),
+        ]);
+
+        displayCarDetail(car, iaAnalysis, { historial, duplicados, esFavorito });
     } catch (error) {
         console.error('Error cargando detalle:', error);
         renderError(error.message);
@@ -33,10 +44,11 @@ function renderError(msg) {
     });
 }
 
-function displayCarDetail(car, ia) {
+function displayCarDetail(car, ia, extras = {}) {
     // Components.imageUrls reemplaza la antigua extractImagenes local.
     const imagenes = Components.imageUrls(car);
     const mainImg = imagenes[0] || '';
+    const { historial = [], duplicados = [], esFavorito = false } = extras;
 
     const container = document.getElementById('carDetail');
     container.innerHTML = `
@@ -55,7 +67,12 @@ function displayCarDetail(car, ia) {
             </div>
 
             <div class="detail-info">
-                <h1>${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h1>
+                ${renderDuplicadosBadge(duplicados)}
+
+                <div class="detail-title-row">
+                    <h1>${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h1>
+                    ${renderFavoritoBtnDetail(car.idVehiculo, esFavorito)}
+                </div>
                 <div class="location">📍 ${escapeHtml(car.ubicacion || 'Ubicación no especificada')}</div>
                 <div class="price">${formatPrice(car.precio)}</div>
 
@@ -74,7 +91,15 @@ function displayCarDetail(car, ia) {
 
                 ${renderSellerCard(car.vendedor)}
 
-                ${renderIaPanel(ia)}
+                ${renderIaPanel(ia, Number(car.precio))}
+
+                ${renderHistorialPrecio(historial)}
+
+                ${renderCostoTotal(Number(car.precio))}
+
+                ${renderSimuladorFinanciacion(Number(car.precio))}
+
+                ${renderReporteBtn(car.idVehiculo)}
 
                 <div class="card">
                     <div class="card-body">
@@ -104,6 +129,13 @@ function displayCarDetail(car, ia) {
             if (main) main.src = e.target.src;
         });
     });
+
+    // Engancha el simulador de financiación si se renderizó.
+    bindSimuladorFinanciacion(Number(car.precio));
+
+    // Listeners de los extras opcionales:
+    bindFavoritoBtnDetail(car.idVehiculo);
+    bindReporteBtn(car.idVehiculo);
 
     // Formulario de contacto real — persiste la consulta en el backend (POST /consultas).
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
@@ -172,7 +204,7 @@ function spec(label, value) {
         </div>`;
 }
 
-function renderIaPanel(ia) {
+function renderIaPanel(ia, precioPublicado) {
     if (!ia) {
         return `
             <div class="ia-panel">
@@ -197,6 +229,11 @@ function renderIaPanel(ia) {
         ? ia.danosVisibles.split('|').map(s => s.trim()).filter(Boolean)
         : [];
 
+    // Veredicto sobre el precio publicado vs el rango estimado por la IA.
+    // Es la implementación de la funcionalidad opcional #2 (estimador de
+    // mercado): "bajo / dentro del promedio / sobrevalorado".
+    const veredicto = priceVerdict(precioPublicado, ia);
+
     return `
         <div class="ia-panel">
             <div class="ia-panel-header">
@@ -209,6 +246,386 @@ function renderIaPanel(ia) {
                 <div class="ia-price-estimate">
                     <div class="label">Rango de precio de mercado</div>
                     <div class="range">${formatPrice(ia.precioEstimadoMin)} — ${formatPrice(ia.precioEstimadoMax)}</div>
+                    ${veredicto ? `
+                        <div class="ia-price-verdict ${veredicto.tone}">
+                            <span class="verdict-label">${veredicto.label}</span>
+                            <span class="verdict-detail">${escapeHtml(veredicto.detail)}</span>
+                        </div>` : ''}
                 </div>` : ''}
+        </div>`;
+}
+
+/* =========================================================
+   Extras opcionales del PDF (frontend puro)
+   ========================================================= */
+
+/**
+ * Extra #2 — Estimador de precio (bajo / dentro / sobre el mercado).
+ * Compara el precio publicado contra el rango que ya devuelve la IA.
+ * Devuelve null si no hay datos suficientes.
+ */
+function priceVerdict(precio, ia) {
+    if (!precio || !ia || ia.precioEstimadoMin == null || ia.precioEstimadoMax == null) {
+        return null;
+    }
+    if (precio < ia.precioEstimadoMin) {
+        return {
+            tone: 'bajo',
+            label: '🟢 Bajo el promedio del mercado',
+            detail: 'El precio publicado está por debajo del rango estimado. Posible oportunidad.',
+        };
+    }
+    if (precio > ia.precioEstimadoMax) {
+        return {
+            tone: 'sobre',
+            label: '🔴 Sobrevalorado',
+            detail: 'El precio publicado supera el rango estimado. Conviene negociar o comparar con otras unidades.',
+        };
+    }
+    return {
+        tone: 'medio',
+        label: '🟡 Dentro del promedio',
+        detail: 'El precio publicado coincide con el rango estimado de mercado.',
+    };
+}
+
+/**
+ * Extra #19 — Calculadora de costo total del vehículo.
+ * Estima patente, seguro y mantenimiento mensual a partir del precio.
+ * Las tasas son aproximadas para Argentina y se documentan en el panel
+ * para que el comprador entienda que es orientativo.
+ */
+function renderCostoTotal(precio) {
+    if (!precio || precio <= 0) return '';
+
+    // Tasas aproximadas (orden de magnitud de mercado argentino, 2026).
+    const TASA_PATENTE = 0.03;          // ~3% del valor anual
+    const TASA_SEGURO = 0.05;           // ~5% del valor anual (terceros completo)
+    const MANTENIMIENTO_MENSUAL = 50;   // USD orientativos por uso normal
+
+    const patenteAnual = Math.round(precio * TASA_PATENTE);
+    const seguroAnual = Math.round(precio * TASA_SEGURO);
+    const mensual = Math.round(patenteAnual / 12 + seguroAnual / 12 + MANTENIMIENTO_MENSUAL);
+    const anual = patenteAnual + seguroAnual + MANTENIMIENTO_MENSUAL * 12;
+
+    return `
+        <div class="cost-panel">
+            <div class="cost-panel-header">
+                <span class="ia-badge">Costos</span>
+                <h3>Costos asociados estimados</h3>
+            </div>
+            <p class="cost-panel-lead">
+                Aproximación a partir del precio publicado. Variables según jurisdicción
+                (patente), aseguradora (seguro) y uso real (mantenimiento).
+            </p>
+            <ul class="cost-list">
+                <li><span class="cost-key">Patente anual (≈ 3% del valor)</span><span class="cost-val">${formatPrice(patenteAnual)}</span></li>
+                <li><span class="cost-key">Seguro anual (≈ 5% del valor)</span><span class="cost-val">${formatPrice(seguroAnual)}</span></li>
+                <li><span class="cost-key">Mantenimiento mensual</span><span class="cost-val">${formatPrice(MANTENIMIENTO_MENSUAL)}</span></li>
+            </ul>
+            <div class="cost-totals">
+                <div class="cost-total-row">
+                    <span>Costo mensual aprox.</span>
+                    <strong>${formatPrice(mensual)}</strong>
+                </div>
+                <div class="cost-total-row">
+                    <span>Costo anual aprox.</span>
+                    <strong>${formatPrice(anual)}</strong>
+                </div>
+            </div>
+        </div>`;
+}
+
+/**
+ * Extra #13 — Simulador de financiación.
+ * Cálculo con sistema francés de amortización:
+ *     cuota = capital * (i * (1 + i)^n) / ((1 + i)^n - 1)
+ * Donde i = tasa mensual decimal y n = cantidad de meses.
+ *
+ * El form es 100% cliente: no pega contra el backend. Los inputs
+ * disparan recálculo en cada change (ver bindSimuladorFinanciacion).
+ */
+function renderSimuladorFinanciacion(precio) {
+    if (!precio || precio <= 0) return '';
+    const anticipoSugerido = Math.round(precio * 0.3);
+    return `
+        <div class="finance-panel">
+            <div class="finance-panel-header">
+                <span class="ia-badge">Financiación</span>
+                <h3>Simulador de cuotas</h3>
+            </div>
+            <form id="financeForm" onsubmit="return false;">
+                <div class="finance-grid">
+                    <div class="form-group">
+                        <label for="finAnticipo">Anticipo (USD)</label>
+                        <input type="number" id="finAnticipo" min="0" max="${precio}" value="${anticipoSugerido}">
+                    </div>
+                    <div class="form-group">
+                        <label for="finPlazo">Plazo (meses)</label>
+                        <input type="number" id="finPlazo" min="6" max="84" step="6" value="36">
+                    </div>
+                    <div class="form-group">
+                        <label for="finTasa">Tasa anual (%)</label>
+                        <input type="number" id="finTasa" min="0" max="200" step="0.5" value="60">
+                    </div>
+                </div>
+            </form>
+            <div class="finance-result">
+                <div class="finance-result-row">
+                    <span>Cuota mensual</span>
+                    <strong id="finCuota">—</strong>
+                </div>
+                <div class="finance-result-row">
+                    <span>Total a pagar (anticipo + cuotas)</span>
+                    <strong id="finTotal">—</strong>
+                </div>
+                <div class="finance-result-row">
+                    <span>Intereses totales</span>
+                    <strong id="finInteres">—</strong>
+                </div>
+            </div>
+            <p class="form-hint">
+                Cálculo orientativo con sistema francés. La cuota real depende de la entidad financiera.
+            </p>
+        </div>`;
+}
+
+/** Engancha listeners al simulador y dispara el primer cálculo. */
+function bindSimuladorFinanciacion(precio) {
+    if (!precio || precio <= 0) return;
+
+    const elAnticipo = document.getElementById('finAnticipo');
+    const elPlazo = document.getElementById('finPlazo');
+    const elTasa = document.getElementById('finTasa');
+    const elCuota = document.getElementById('finCuota');
+    const elTotal = document.getElementById('finTotal');
+    const elInteres = document.getElementById('finInteres');
+    if (!elAnticipo || !elPlazo || !elTasa || !elCuota || !elTotal || !elInteres) return;
+
+    const recalcular = () => {
+        const anticipo = Math.max(0, Math.min(Number(elAnticipo.value) || 0, precio));
+        const meses = Math.max(1, Math.round(Number(elPlazo.value) || 36));
+        const tasaAnual = Math.max(0, Number(elTasa.value) || 0);
+
+        const capital = Math.max(0, precio - anticipo);
+        const i = (tasaAnual / 100) / 12;
+
+        let cuota;
+        if (i === 0 || capital === 0) {
+            cuota = capital / meses;
+        } else {
+            cuota = capital * (i * Math.pow(1 + i, meses)) / (Math.pow(1 + i, meses) - 1);
+        }
+        const total = cuota * meses + anticipo;
+        const interes = Math.max(0, total - precio);
+
+        elCuota.textContent = formatPrice(Math.round(cuota));
+        elTotal.textContent = formatPrice(Math.round(total));
+        elInteres.textContent = formatPrice(Math.round(interes));
+    };
+
+    [elAnticipo, elPlazo, elTasa].forEach((input) => input.addEventListener('input', recalcular));
+    recalcular();
+}
+
+
+/* =========================================================
+   Extras opcionales que sí pegan contra el backend
+   ========================================================= */
+
+/* ---------- #3 Favoritos (botón en la ficha) ---------- */
+
+function renderFavoritoBtnDetail(idVehiculo, esFavorito) {
+    // Solo se muestra para compradores logueados. Visitantes y vendedores
+    // no ven el botón (los vendedores no consumen su propio catálogo).
+    if (!Auth.isLoggedIn() || Auth.getRol() !== 'comprador') return '';
+    return `
+        <button type="button"
+                id="favoritoDetailBtn"
+                class="favorito-btn favorito-btn--detail ${esFavorito ? 'is-active' : ''}"
+                data-favorito="${escapeHtml(String(idVehiculo))}"
+                aria-pressed="${esFavorito}"
+                aria-label="${esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos'}">
+            ${esFavorito ? '❤️' : '🤍'}
+        </button>`;
+}
+
+function bindFavoritoBtnDetail() {
+    const btn = document.getElementById('favoritoDetailBtn');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+        const id = btn.dataset.favorito;
+        try {
+            const r = await apiCall(`/favoritos/${id}`, { method: 'POST' });
+            btn.classList.toggle('is-active', r.favorito);
+            btn.setAttribute('aria-pressed', String(r.favorito));
+            btn.innerHTML = r.favorito ? '❤️' : '🤍';
+            btn.setAttribute(
+                'aria-label',
+                r.favorito ? 'Quitar de favoritos' : 'Agregar a favoritos',
+            );
+        } catch (err) {
+            console.error('Error toggleando favorito:', err);
+        }
+    });
+}
+
+
+/* ---------- #14 Historial de cambios de precio ---------- */
+
+function renderHistorialPrecio(historial) {
+    if (!Array.isArray(historial) || historial.length === 0) return '';
+
+    const filas = historial.map((h) => {
+        const fecha = h.fechaCambio
+            ? new Date(h.fechaCambio).toLocaleDateString('es-AR', { year: 'numeric', month: 'short', day: 'numeric' })
+            : '—';
+        const antes = Number(h.precioAnterior);
+        const despues = Number(h.precioNuevo);
+        const diff = despues - antes;
+        const subio = diff > 0;
+        const tone = subio ? 'sube' : 'baja';
+        const flecha = subio ? '↑' : '↓';
+        return `
+            <li class="historial-item">
+                <span class="historial-fecha">${escapeHtml(fecha)}</span>
+                <span class="historial-cambio ${tone}">
+                    ${formatPrice(antes)} → ${formatPrice(despues)}
+                    <span class="historial-delta">${flecha} ${formatPrice(Math.abs(diff))}</span>
+                </span>
+            </li>`;
+    }).join('');
+
+    return `
+        <div class="historial-panel">
+            <div class="historial-header">
+                <span class="ia-badge">Historial</span>
+                <h3>Cambios de precio</h3>
+            </div>
+            <ul class="historial-list">${filas}</ul>
+        </div>`;
+}
+
+
+/* ---------- #15 Reporte de publicaciones ---------- */
+
+const MOTIVOS_REPORTE = [
+    { value: 'precio_sospechoso',  label: 'Precio sospechoso' },
+    { value: 'fotos_falsas',       label: 'Fotos falsas o no corresponden' },
+    { value: 'fraude',             label: 'Posible fraude' },
+    { value: 'duplicado',          label: 'Publicación duplicada' },
+    { value: 'datos_incorrectos',  label: 'Datos incorrectos' },
+    { value: 'otro',               label: 'Otro motivo' },
+];
+
+function renderReporteBtn(idVehiculo) {
+    // Solo se muestra a usuarios logueados. El vendedor de esta publicación
+    // verá el botón pero el backend rechaza con 403 si intenta reportarse.
+    if (!Auth.isLoggedIn()) return '';
+    return `
+        <button type="button"
+                id="reportarBtn"
+                class="btn btn-ghost btn-sm reportar-link"
+                data-vehiculo="${escapeHtml(String(idVehiculo))}">
+            ⚠ Reportar esta publicación
+        </button>
+
+        <div id="reporteModal" class="modal-overlay hidden" aria-hidden="true">
+            <div class="modal-content" role="dialog" aria-labelledby="reporteTitle">
+                <div class="modal-header">
+                    <h2 id="reporteTitle">Reportar publicación</h2>
+                    <button class="modal-close" id="reporteClose" aria-label="Cerrar">×</button>
+                </div>
+                <form id="reporteForm" class="modal-body">
+                    <div id="reporteFeedback"></div>
+                    <div class="form-group">
+                        <label for="reporteMotivo">Motivo</label>
+                        <select id="reporteMotivo" required>
+                            <option value="">Seleccionar</option>
+                            ${MOTIVOS_REPORTE.map(m => `<option value="${m.value}">${m.label}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reporteDescripcion">Detalles (opcional)</label>
+                        <textarea id="reporteDescripcion" rows="3" maxlength="500"
+                                  placeholder="Información adicional para los moderadores..."></textarea>
+                    </div>
+                    <div class="flex-row" style="justify-content: flex-end; gap: 0.6rem;">
+                        <button type="button" class="btn btn-ghost" id="reporteCancel">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="reporteSubmit">Enviar reporte</button>
+                    </div>
+                </form>
+            </div>
+        </div>`;
+}
+
+function bindReporteBtn(idVehiculo) {
+    const btn = document.getElementById('reportarBtn');
+    const modal = document.getElementById('reporteModal');
+    if (!btn || !modal) return;
+
+    const close = () => {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+    };
+    const open = () => {
+        if (!Auth.isLoggedIn()) {
+            alert('Iniciá sesión para reportar publicaciones.');
+            return;
+        }
+        clearAlert('reporteFeedback');
+        document.getElementById('reporteForm').reset();
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+    };
+
+    btn.addEventListener('click', open);
+    document.getElementById('reporteClose').addEventListener('click', close);
+    document.getElementById('reporteCancel').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+
+    document.getElementById('reporteForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('reporteSubmit');
+        const motivo = document.getElementById('reporteMotivo').value;
+        const descripcion = document.getElementById('reporteDescripcion').value.trim();
+        if (!motivo) {
+            showAlert('reporteFeedback', 'Elegí un motivo para el reporte.', 'error');
+            return;
+        }
+        setButtonLoading(submitBtn, true, 'Enviando...');
+        try {
+            await apiCall('/reportes', {
+                method: 'POST',
+                body: JSON.stringify({
+                    idVehiculo,
+                    motivo,
+                    descripcion: descripcion || undefined,
+                }),
+            });
+            close();
+            showAlert('contactMessage', 'Reporte enviado. Gracias por avisar.', 'success');
+        } catch (err) {
+            showAlert('reporteFeedback', 'No se pudo enviar el reporte: ' + err.message, 'error');
+        } finally {
+            setButtonLoading(submitBtn, false);
+        }
+    });
+}
+
+
+/* ---------- #18 Detector de fotos repetidas ---------- */
+
+function renderDuplicadosBadge(duplicados) {
+    if (!Array.isArray(duplicados) || duplicados.length === 0) return '';
+    const cantidad = duplicados.length;
+    return `
+        <div class="duplicados-warning">
+            <strong>⚠ Posible duplicado</strong>
+            <span>
+                Esta publicación comparte ${cantidad === 1 ? 'una imagen' : `${cantidad} imágenes`}
+                con ${cantidad === 1 ? 'otra publicación' : 'otras publicaciones'} del catálogo.
+                Verificá los datos del vehículo antes de avanzar.
+            </span>
         </div>`;
 }
