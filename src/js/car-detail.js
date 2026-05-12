@@ -63,19 +63,34 @@ function displayCarDetail(car, ia, extras = {}) {
 
     const container = document.getElementById('carDetail');
     container.innerHTML = `
+        <!-- Layout en 2 columnas:
+               Izquierda  → galería + descripción + vendedor (lo "que cuenta sobre el auto")
+               Derecha    → ficha técnica + IA (lo "que decide la compra")
+             Así no queda hueco debajo de la galería cuando hay pocas fotos
+             y la IA queda enfrentada a las specs como contrapunto visual. -->
         <div class="detail-grid">
-            <div class="detail-gallery">
-                <div class="detail-gallery-main" id="mainImage" ${mainImg ? 'data-zoomable="1"' : ''} title="${mainImg ? 'Click para ampliar' : ''}">
-                    ${mainImg
-                        ? `<img src="${escapeHtml(mainImg)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}">
-                           <span class="gallery-zoom-hint" aria-hidden="true">🔍 Click para ampliar</span>`
-                        : `<div class="no-image" style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-text-muted);">Sin foto disponible</div>`
-                    }
+            <div class="detail-side-left">
+                <div class="detail-gallery">
+                    <div class="detail-gallery-main" id="mainImage" ${mainImg ? 'data-zoomable="1"' : ''} title="${mainImg ? 'Click para ampliar' : ''}">
+                        ${mainImg
+                            ? `<img src="${escapeHtml(mainImg)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}">
+                               <span class="gallery-zoom-hint" aria-hidden="true">🔍 Click para ampliar</span>`
+                            : `<div class="no-image" style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-text-muted);">Sin foto disponible</div>`
+                        }
+                    </div>
+                    ${imagenes.length > 1 ? `
+                        <div class="detail-gallery-thumbs">
+                            ${imagenes.slice(0, 8).map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'active' : ''}" alt="Foto ${i + 1}">`).join('')}
+                        </div>` : ''}
                 </div>
-                ${imagenes.length > 1 ? `
-                    <div class="detail-gallery-thumbs">
-                        ${imagenes.slice(0, 8).map((src, i) => `<img src="${escapeHtml(src)}" data-index="${i}" class="${i === 0 ? 'active' : ''}" alt="Foto ${i + 1}">`).join('')}
+
+                ${car.descripcion ? `
+                    <div class="detail-description">
+                        <h3>Descripción</h3>
+                        <p>${escapeHtml(car.descripcion)}</p>
                     </div>` : ''}
+
+                ${renderSellerCard(car.vendedor)}
             </div>
 
             <div class="detail-info">
@@ -94,14 +109,6 @@ function displayCarDetail(car, ia, extras = {}) {
                     ${spec('Combustible', car.tipoCombustible)}
                     ${spec('Transmisión', car.transmision)}
                 </div>
-
-                ${car.descripcion ? `
-                    <div class="detail-description">
-                        <h3>Descripción</h3>
-                        <p>${escapeHtml(car.descripcion)}</p>
-                    </div>` : ''}
-
-                ${renderSellerCard(car.vendedor)}
 
                 ${renderIaPanel(ia, Number(car.precio))}
             </div>

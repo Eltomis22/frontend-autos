@@ -11,6 +11,17 @@
     align-items: start;
 }
 
+/* Columna izquierda: galería + descripción + vendedor.
+   Antes la galería era hija directa del grid; ahora la envolvemos
+   en `.detail-side-left` junto con los bloques "contexto del auto"
+   para llenar el hueco que quedaba debajo cuando la galería era
+   chica y la columna derecha mucho más alta. */
+.detail-side-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
 .detail-gallery {
     display: flex;
     flex-direction: column;
@@ -108,9 +119,9 @@
     font-size: 1.02rem;
 }
 
-/* `background` y `border` los aporta components/surface.css. */
+/* `background` y `border` los aporta components/surface.css.
+   El spacing entre hermanos lo controla `.detail-side-left` con gap. */
 .detail-description {
-    margin-bottom: 1.5rem;
     padding: 1.4rem;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
@@ -128,13 +139,13 @@
 }
 
 /* ---------- Tarjeta del vendedor ---------- */
-/* `background` y `border` los aporta components/surface.css. */
+/* `background` y `border` los aporta components/surface.css.
+   El spacing entre hermanos lo controla `.detail-side-left` con gap. */
 .seller-card {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1.2rem 1.3rem;
-    margin-bottom: 1.5rem;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-xs);
 }
