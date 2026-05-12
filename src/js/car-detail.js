@@ -104,33 +104,42 @@ function displayCarDetail(car, ia, extras = {}) {
                 ${renderSellerCard(car.vendedor)}
 
                 ${renderIaPanel(ia, Number(car.precio))}
-
-                ${renderHistorialPrecio(historial)}
-
-                ${renderCostoTotal(Number(car.precio))}
-
-                ${renderSimuladorFinanciacion(Number(car.precio))}
-
-                ${renderReporteBtn(car.idVehiculo)}
-
-                <div class="card">
-                    <div class="card-body">
-                        <h3 style="font-weight:700;margin-bottom:0.8rem;">Contactar al vendedor</h3>
-                        <div id="contactMessage"></div>
-                        <form id="contactForm">
-                            <div class="form-group">
-                                <label for="message">Tu consulta</label>
-                                <textarea id="message" placeholder="Hola, estoy interesado en el vehículo..." required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block" id="contactBtn">Enviar consulta</button>
-                        </form>
-                        <p class="form-hint" style="margin-top: 0.8rem;">
-                            El vendedor recibirá tu consulta junto con tus datos de contacto registrados.
-                        </p>
-                    </div>
-                </div>
             </div>
         </div>
+
+        <!-- Sección de paneles secundarios distribuidos en grilla full-width.
+             Sale del flujo de detail-info para que la página no quede como
+             una columna larga de paneles apilados; los paneles "más anchos
+             que altos" se acomodan en 2-3 columnas según el viewport. -->
+        <section class="detail-extras-grid">
+            ${renderCostoTotal(Number(car.precio))}
+            ${renderSimuladorFinanciacion(Number(car.precio))}
+            ${renderHistorialPrecio(historial)}
+        </section>
+
+        <!-- Contacto al vendedor en su propia card a todo lo ancho:
+             el textarea queda más cómodo en lugar de una columna estrecha. -->
+        <section class="detail-contact">
+            <div class="card">
+                <div class="card-body">
+                    <h3 style="font-weight:700;margin-bottom:0.8rem;">Contactar al vendedor</h3>
+                    <div id="contactMessage"></div>
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="message">Tu consulta</label>
+                            <textarea id="message" placeholder="Hola, estoy interesado en el vehículo..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block" id="contactBtn">Enviar consulta</button>
+                    </form>
+                    <p class="form-hint" style="margin-top: 0.8rem;">
+                        El vendedor recibirá tu consulta junto con tus datos de contacto registrados.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reportar al final, como acción discreta. -->
+        ${renderReporteBtn(car.idVehiculo)}
 
         ${renderRelacionados(relacionados)}
         ${renderLightbox(imagenes)}`;

@@ -336,13 +336,16 @@
 }
 
 /* ---------- Panel de costos asociados (extra #19) ----------
-   `background` y `border` los aporta components/surface.css. */
+   `background` y `border` los aporta components/surface.css.
+   No tienen margin-bottom: viven dentro de .detail-extras-grid y el
+   gap del grid controla el espaciado. */
 .cost-panel,
 .finance-panel {
     border-radius: var(--radius-md);
     padding: 1.5rem;
-    margin-bottom: 1.5rem;
     box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
 }
 
 .cost-panel-header,
@@ -482,13 +485,14 @@
 }
 
 /* ---------- Historial de cambios de precio (extra #14) ----------
-   `background` y `border` los aporta components/surface.css cuando
-   sumemos `.historial-panel` al grupo. */
+   `background` y `border` los aporta components/surface.css.
+   Sin margin-bottom: usa el gap de .detail-extras-grid. */
 .historial-panel {
     border-radius: var(--radius-md);
     padding: 1.4rem;
-    margin-bottom: 1.5rem;
     box-shadow: var(--shadow-xs);
+    display: flex;
+    flex-direction: column;
 }
 
 .historial-header {
@@ -556,10 +560,12 @@
     color: var(--color-success);
 }
 
-/* ---------- Botón "Reportar" + modal (extra #15) ---------- */
+/* ---------- Botón "Reportar" + modal (extra #15) ----------
+   Como ahora vive después del contact form a todo el ancho,
+   lo achicamos y lo centramos para que sea una acción discreta. */
 .reportar-link {
-    width: 100%;
-    margin-bottom: 1.5rem;
+    display: block;
+    margin: 0 auto 2rem;
     color: var(--color-text-muted);
 }
 
@@ -720,5 +726,34 @@
 
 .relacionados-header {
     margin-bottom: 1.4rem;
+}
+
+/* ---------- Grilla de paneles secundarios (full width) ----------
+   Saca costos, simulador e historial de la columna estrecha de
+   detail-info y los acomoda en 2-3 columnas de ancho cómodo. El
+   `auto-fit` con minmax(300px, 1fr) se adapta solo: a partir de
+   ~640px hay 2 columnas, a partir de ~960px hay 3, en mobile 1. */
+.detail-extras-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2.5rem 0 2rem;
+    align-items: stretch;
+}
+
+.detail-extras-grid > * {
+    /* Por las dudas, en navegadores que no respeten el align-items
+       de un grid implícito. */
+    height: 100%;
+}
+
+/* Sección "Contactar al vendedor" a todo el ancho — el textarea
+   se ve mucho mejor que en una columna angosta. */
+.detail-contact {
+    margin-bottom: 1.5rem;
+}
+
+.detail-contact textarea {
+    min-height: 110px;
 }
 
