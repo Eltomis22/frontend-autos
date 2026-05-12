@@ -18,61 +18,103 @@
     <main>
         <div class="container">
             <h1 class="section-title">Catálogo de vehículos</h1>
-            <p class="section-subtitle">Usados seleccionados y 0km disponibles en CATO Group. Filtrá por marca, modelo, precio, año y ubicación.</p>
+            <p class="section-subtitle">Usados seleccionados y 0km disponibles en CATO Group. Filtrá lateralmente por marca, modelo, precio, año y ubicación.</p>
 
-            <section class="filters-bar">
-                <h3>🔍 Filtros de búsqueda</h3>
-                <form id="filterForm">
-                    <div class="filters-grid">
-                        <div class="form-group" style="margin: 0;">
-                            <label for="marca">Marca</label>
-                            <input type="text" id="marca" placeholder="Toyota, Ford...">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="modelo">Modelo</label>
-                            <input type="text" id="modelo" placeholder="Corolla, Focus...">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="precioMin">Precio mínimo (USD)</label>
-                            <input type="number" id="precioMin" min="0" placeholder="0">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="precioMax">Precio máximo (USD)</label>
-                            <input type="number" id="precioMax" min="0" placeholder="100000">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="anioMin">Año desde</label>
-                            <input type="number" id="anioMin" min="1900" max="2026" placeholder="2010">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="anioMax">Año hasta</label>
-                            <input type="number" id="anioMax" min="1900" max="2026" placeholder="2024">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="kmMax">Kilometraje máximo</label>
-                            <input type="number" id="kmMax" min="0" step="1000" placeholder="120000">
-                        </div>
-                        <div class="form-group" style="margin: 0;">
-                            <label for="ubicacion">Ubicación</label>
-                            <input type="text" id="ubicacion" placeholder="Buenos Aires...">
+            <!-- Layout de dos columnas: sidebar de filtros + resultados.
+                 En mobile colapsa a una sola columna con el sidebar plegable. -->
+            <div class="catalog-layout">
+
+                <!-- ─────────── Sidebar de filtros (estilo Mercado Libre) ─────────── -->
+                <aside class="filters-sidebar" id="filtersSidebar">
+                    <div class="filters-sidebar-header">
+                        <h3>Filtros</h3>
+                        <button type="button" id="clearFiltersBtn" class="btn btn-ghost btn-sm hidden">
+                            Limpiar todo
+                        </button>
+                    </div>
+
+                    <!-- Resumen / búsqueda libre por marca o modelo -->
+                    <div class="filter-group">
+                        <label class="filter-group-title" for="searchInput">Buscar</label>
+                        <input type="text" id="searchInput" placeholder="Marca, modelo, ubicación...">
+                    </div>
+
+                    <!-- Las listas categóricas se completan desde JS con counts.
+                         Cada item es <button data-filter="marca" data-value="Toyota">. -->
+                    <div class="filter-group" id="grpUbicacion">
+                        <h4 class="filter-group-title">Ubicación</h4>
+                        <ul class="filter-list" data-filter-list="ubicacion"></ul>
+                        <button type="button" class="filter-more hidden" data-toggle-more="ubicacion">Mostrar más</button>
+                    </div>
+
+                    <div class="filter-group" id="grpMarca">
+                        <h4 class="filter-group-title">Marca</h4>
+                        <ul class="filter-list" data-filter-list="marca"></ul>
+                        <button type="button" class="filter-more hidden" data-toggle-more="marca">Mostrar más</button>
+                    </div>
+
+                    <div class="filter-group" id="grpModelo">
+                        <h4 class="filter-group-title">Modelo</h4>
+                        <ul class="filter-list" data-filter-list="modelo"></ul>
+                        <button type="button" class="filter-more hidden" data-toggle-more="modelo">Mostrar más</button>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Combustible</h4>
+                        <ul class="filter-list" data-filter-list="tipoCombustible"></ul>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Transmisión</h4>
+                        <ul class="filter-list" data-filter-list="transmision"></ul>
+                    </div>
+
+                    <!-- Rangos numéricos: precio, año, km -->
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Precio (USD)</h4>
+                        <div class="filter-range">
+                            <input type="number" id="precioMin" min="0" placeholder="Mínimo">
+                            <span>–</span>
+                            <input type="number" id="precioMax" min="0" placeholder="Máximo">
                         </div>
                     </div>
-                    <div class="flex-row" style="margin-top: 1rem;">
-                        <button type="submit" class="btn btn-primary">Aplicar filtros</button>
-                        <button type="button" id="clearFilters" class="btn btn-ghost">Limpiar</button>
-                    </div>
-                </form>
-            </section>
 
-            <div class="cars-header">
-                <div>
-                    <h2>Resultados</h2>
-                    <span class="results-count" id="resultsCount">Cargando...</span>
-                </div>
-                <button id="compareBtn" class="btn btn-accent hidden">Comparar seleccionados (0)</button>
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Año</h4>
+                        <div class="filter-range">
+                            <input type="number" id="anioMin" min="1900" max="2026" placeholder="Desde">
+                            <span>–</span>
+                            <input type="number" id="anioMax" min="1900" max="2026" placeholder="Hasta">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4 class="filter-group-title">Kilometraje máximo</h4>
+                        <input type="number" id="kmMax" min="0" step="1000" placeholder="Ej: 120000">
+                    </div>
+                </aside>
+
+                <!-- Toggle del sidebar en mobile -->
+                <button type="button" id="mobileFiltersToggle" class="mobile-filters-toggle">
+                    🔍 Filtros
+                </button>
+
+                <!-- ─────────── Resultados ─────────── -->
+                <section class="catalog-results">
+                    <!-- Chips de filtros activos -->
+                    <div id="activeFilters" class="active-filters"></div>
+
+                    <div class="cars-header">
+                        <div>
+                            <h2>Resultados</h2>
+                            <span class="results-count" id="resultsCount">Cargando...</span>
+                        </div>
+                        <button id="compareBtn" class="btn btn-accent hidden">Comparar seleccionados (0)</button>
+                    </div>
+
+                    <div id="carsContainer"></div>
+                </section>
             </div>
-
-            <div id="carsContainer"></div>
         </div>
     </main>
 

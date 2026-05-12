@@ -16,12 +16,13 @@ async function loadCarDetail(id) {
     try {
         const car = await apiCall(`/vehiculos/${id}`);
 
-        // Estos cuatro fetches son OPCIONALES — si fallan no rompemos la
-        // página, simplemente no mostramos el panel correspondiente.
-        const [iaAnalysis, historial, duplicados, esFavorito] = await Promise.all([
+        // Estos fetches son OPCIONALES — si fallan no rompemos la página,
+        // simplemente no mostramos el panel correspondiente.
+        const [iaAnalysis, historial, duplicados, relacionados, esFavorito] = await Promise.all([
             apiCall(`/ia/analizar/${id}`).catch(() => null),
             apiCall(`/vehiculos/${id}/historial-precio`).catch(() => []),
             apiCall(`/vehiculos/${id}/duplicados`).catch(() => []),
+            apiCall(`/vehiculos/${id}/relacionados`).catch(() => []),
             (Auth.isLoggedIn() && Auth.getRol() === 'comprador')
                 ? apiCall('/favoritos/ids')
                     .then((ids) => Array.isArray(ids) && ids.map(String).includes(String(id)))
@@ -29,7 +30,12 @@ async function loadCarDetail(id) {
                 : Promise.resolve(false),
         ]);
 
-        displayCarDetail(car, iaAnalysis, { historial, duplicados, esFavorito });
+        displayCarDetail(car, iaAnalysis, {
+            historial,
+            duplicados,
+            relacionados,
+            esFavorito,
+        });
     } catch (error) {
         console.error('Error cargando detalle:', error);
         renderError(error.message);
@@ -48,15 +54,21 @@ function displayCarDetail(car, ia, extras = {}) {
     // Components.imageUrls reemplaza la antigua extractImagenes local.
     const imagenes = Components.imageUrls(car);
     const mainImg = imagenes[0] || '';
-    const { historial = [], duplicados = [], esFavorito = false } = extras;
+    const {
+        historial = [],
+        duplicados = [],
+        relacionados = [],
+        esFavorito = false,
+    } = extras;
 
     const container = document.getElementById('carDetail');
     container.innerHTML = `
         <div class="detail-grid">
             <div class="detail-gallery">
-                <div class="detail-gallery-main" id="mainImage">
+                <div class="detail-gallery-main" id="mainImage" ${mainImg ? 'data-zoomable="1"' : ''} title="${mainImg ? 'Click para ampliar' : ''}">
                     ${mainImg
-                        ? `<img src="${escapeHtml(mainImg)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}">`
+                        ? `<img src="${escapeHtml(mainImg)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}">
+                           <span class="gallery-zoom-hint" aria-hidden="true">🔍 Click para ampliar</span>`
                         : `<div class="no-image" style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--color-text-muted);">Sin foto disponible</div>`
                     }
                 </div>
@@ -118,7 +130,10 @@ function displayCarDetail(car, ia, extras = {}) {
                     </div>
                 </div>
             </div>
-        </div>`;
+        </div>
+
+        ${renderRelacionados(relacionados)}
+        ${renderLightbox(imagenes)}`;
 
     // Galería interactiva
     document.querySelectorAll('.detail-gallery-thumbs img').forEach(thumb => {
@@ -136,6 +151,7 @@ function displayCarDetail(car, ia, extras = {}) {
     // Listeners de los extras opcionales:
     bindFavoritoBtnDetail(car.idVehiculo);
     bindReporteBtn(car.idVehiculo);
+    bindLightbox(imagenes);
 
     // Formulario de contacto real — persiste la consulta en el backend (POST /consultas).
     document.getElementById('contactForm').addEventListener('submit', async (e) => {
@@ -628,4 +644,140 @@ function renderDuplicadosBadge(duplicados) {
                 Verificá los datos del vehículo antes de avanzar.
             </span>
         </div>`;
+}
+
+
+/* ---------- Lightbox con zoom (galería ampliada) ----------
+   Click en la foto principal → abre un modal a pantalla completa
+   con la imagen al máximo. Click adentro alterna entre "fit" y
+   "zoom 2x". Flechas para navegar entre fotos. Click afuera o
+   ESC cierra. */
+
+let lightboxState = { index: 0, zoom: 1, fotos: [] };
+
+function renderLightbox(imagenes) {
+    if (!Array.isArray(imagenes) || imagenes.length === 0) return '';
+    return `
+        <div id="lightbox" class="lightbox hidden" aria-hidden="true" role="dialog" aria-label="Galería ampliada">
+            <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
+            <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Foto anterior">‹</button>
+            <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Foto siguiente">›</button>
+            <div class="lightbox-stage" id="lightboxStage">
+                <img id="lightboxImg" alt="Foto ampliada del vehículo">
+            </div>
+            <div class="lightbox-counter" id="lightboxCounter"></div>
+        </div>`;
+}
+
+function bindLightbox(imagenes) {
+    if (!Array.isArray(imagenes) || imagenes.length === 0) return;
+    lightboxState.fotos = imagenes;
+
+    const main = document.getElementById('mainImage');
+    const lb = document.getElementById('lightbox');
+    if (!main || !lb) return;
+
+    // Abrir al click sobre la foto principal
+    main.addEventListener('click', () => {
+        const activeThumb = document.querySelector('.detail-gallery-thumbs img.active');
+        const startIdx = activeThumb ? Number(activeThumb.dataset.index) : 0;
+        abrirLightbox(startIdx);
+    });
+
+    // También abrir desde un click sobre una miniatura (doble click es UX rara,
+    // así que usamos click simple — la miniatura ya quedó "activa" por el handler
+    // de galería que está más arriba; este listener viene después y abre el modal).
+    document.querySelectorAll('.detail-gallery-thumbs img').forEach((thumb) => {
+        thumb.addEventListener('dblclick', () => {
+            abrirLightbox(Number(thumb.dataset.index));
+        });
+    });
+
+    document.getElementById('lightboxClose').addEventListener('click', cerrarLightbox);
+    document.getElementById('lightboxPrev').addEventListener('click', (e) => { e.stopPropagation(); navegarLightbox(-1); });
+    document.getElementById('lightboxNext').addEventListener('click', (e) => { e.stopPropagation(); navegarLightbox(1); });
+
+    // Click afuera de la imagen cierra. Click sobre la imagen alterna zoom.
+    lb.addEventListener('click', (e) => {
+        if (e.target === lb || e.target.id === 'lightboxStage') cerrarLightbox();
+    });
+    document.getElementById('lightboxImg').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleZoomLightbox();
+    });
+
+    // Teclado: ESC cierra, flechas navegan.
+    document.addEventListener('keydown', (e) => {
+        if (lb.classList.contains('hidden')) return;
+        if (e.key === 'Escape') cerrarLightbox();
+        if (e.key === 'ArrowLeft') navegarLightbox(-1);
+        if (e.key === 'ArrowRight') navegarLightbox(1);
+    });
+}
+
+function abrirLightbox(idx) {
+    const lb = document.getElementById('lightbox');
+    if (!lb || !lightboxState.fotos.length) return;
+    lightboxState.index = Math.max(0, Math.min(idx || 0, lightboxState.fotos.length - 1));
+    lightboxState.zoom = 1;
+    pintarLightbox();
+    lb.classList.remove('hidden');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden'; // bloquea scroll de fondo
+}
+
+function cerrarLightbox() {
+    const lb = document.getElementById('lightbox');
+    if (!lb) return;
+    lb.classList.add('hidden');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+}
+
+function navegarLightbox(delta) {
+    const total = lightboxState.fotos.length;
+    if (total === 0) return;
+    lightboxState.index = (lightboxState.index + delta + total) % total;
+    lightboxState.zoom = 1;
+    pintarLightbox();
+}
+
+function toggleZoomLightbox() {
+    lightboxState.zoom = lightboxState.zoom === 1 ? 2 : 1;
+    pintarLightbox();
+}
+
+function pintarLightbox() {
+    const img = document.getElementById('lightboxImg');
+    const counter = document.getElementById('lightboxCounter');
+    if (!img) return;
+    img.src = lightboxState.fotos[lightboxState.index];
+    img.style.transform = `scale(${lightboxState.zoom})`;
+    img.style.cursor = lightboxState.zoom === 1 ? 'zoom-in' : 'zoom-out';
+    if (counter) {
+        counter.textContent = `${lightboxState.index + 1} / ${lightboxState.fotos.length}`;
+    }
+    // Mostrar/ocultar flechas si hay una sola foto
+    const total = lightboxState.fotos.length;
+    document.getElementById('lightboxPrev').style.visibility = total > 1 ? '' : 'hidden';
+    document.getElementById('lightboxNext').style.visibility = total > 1 ? '' : 'hidden';
+}
+
+
+/* ---------- Autos relacionados al pie de la ficha ---------- */
+
+function renderRelacionados(relacionados) {
+    if (!Array.isArray(relacionados) || relacionados.length === 0) return '';
+    return `
+        <section class="relacionados-section">
+            <div class="relacionados-header">
+                <h2 class="section-title" style="margin-bottom: 0.2rem;">Autos relacionados</h2>
+                <p class="section-subtitle" style="margin-bottom: 0;">
+                    Otras unidades parecidas del catálogo que te pueden interesar.
+                </p>
+            </div>
+            <div class="cars-grid">
+                ${relacionados.map((car) => Components.carCard(car)).join('')}
+            </div>
+        </section>`;
 }

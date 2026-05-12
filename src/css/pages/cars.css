@@ -1,33 +1,258 @@
 /* ==========================================================
-   pages/cars.css — catálogo (cars.html): barra de filtros
-   y grilla de tarjetas de vehículo.
+   pages/cars.css — catálogo (cars.html): sidebar de filtros
+   estilo Mercado Libre + grilla de tarjetas de vehículo.
    ========================================================== */
 
-/* ---------- Filters bar ---------- */
-/* `background` y `border` los aporta components/surface.css. */
-.filters-bar {
-    border-radius: var(--radius-md);
-    padding: 1.6rem;
-    margin-bottom: 2rem;
-    box-shadow: var(--shadow-sm);
+/* ---------- Layout de dos columnas ---------- */
+.catalog-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 2rem;
+    align-items: start;
 }
 
-.filters-bar h3 {
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 1.1rem;
-    color: var(--color-text);
+/* ---------- Sidebar de filtros ---------- */
+.filters-sidebar {
+    position: sticky;
+    top: 90px;          /* deja espacio para el navbar fijo */
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    padding-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.filters-sidebar-header {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    letter-spacing: -0.01em;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-border);
 }
 
-.filters-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-    gap: 1rem;
-    align-items: end;
+.filters-sidebar-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+}
+
+/* Grupo de filtros (Ubicación, Marca, Modelo, etc.) */
+.filter-group {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.filter-group:last-child {
+    border-bottom: none;
+}
+
+.filter-group-title {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.55rem;
+}
+
+/* Lista de items clickeables (estilo Mercado Libre) */
+.filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.filter-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 0.32rem 0;
+    cursor: pointer;
+    color: var(--color-text);
+    font-size: 0.88rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    transition: color var(--transition);
+}
+
+.filter-item:hover {
+    color: var(--color-primary);
+}
+
+.filter-item-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.filter-item-count {
+    color: var(--color-text-subtle);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Estado seleccionado: chip pleno con color primario */
+.filter-item.is-active {
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.filter-item.is-active .filter-item-label::before {
+    content: "✓ ";
+    font-weight: 800;
+}
+
+.filter-more {
+    background: transparent;
+    border: none;
+    padding: 0.45rem 0;
+    margin-top: 0.2rem;
+    cursor: pointer;
+    color: var(--color-primary);
+    font-size: 0.84rem;
+    font-weight: 600;
+}
+
+.filter-more:hover {
+    text-decoration: underline;
+}
+
+/* Rangos numéricos (precio, año) */
+.filter-range {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.filter-range input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.filter-range input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.filter-range span {
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.filter-group input[type="text"],
+.filter-group input[type="number"] {
+    width: 100%;
+    padding: 0.5rem 0.6rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.filter-group input[type="text"]:focus,
+.filter-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+/* ---------- Toggle mobile del sidebar ---------- */
+.mobile-filters-toggle {
+    display: none; /* visible solo en mobile vía responsive.css */
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.7rem 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+}
+
+.mobile-filters-toggle.is-active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+/* ---------- Chips de filtros activos arriba de resultados ---------- */
+.active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.32rem 0.7rem;
+    background: var(--color-info-soft);
+    color: var(--color-info);
+    border: 1px solid rgba(29, 78, 216, 0.25);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+
+.filter-chip:hover {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+    border-color: rgba(185, 28, 28, 0.25);
+}
+
+.filter-chip-x {
+    font-size: 1rem;
+    line-height: 1;
+    font-weight: 800;
+}
+
+/* ---------- Mobile (≤ 900px): sidebar plegable arriba ---------- */
+@media (max-width: 900px) {
+    .catalog-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .mobile-filters-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filters-sidebar {
+        display: none;
+        position: static;
+        max-height: none;
+        padding: 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
+        margin-bottom: 1rem;
+    }
+
+    .filters-sidebar.is-open {
+        display: block;
+    }
 }
 
 /* ---------- Car grid ---------- */
