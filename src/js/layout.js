@@ -29,7 +29,7 @@ const Layout = (() => {
 
     /* ---------- Detección de contexto ---------- */
     function isInViews() {
-        return /\/src\/views\//.test(window.location.pathname);
+        return window.location.pathname.includes('/src/views/');
     }
 
     /* ---------- Resolución de rutas ---------- */
@@ -61,7 +61,8 @@ const Layout = (() => {
             LINK_LOGIN: route('login'),
             LINK_REGISTER: route('register'),
         };
-        return html.replace(/\{\{(\w+)\}\}/g, (_match, key) => {
+        const placeholderRegex = /\{\{(\w+)\}\}/g;
+        return html.replace(placeholderRegex, (_match, key) => {
             return Object.prototype.hasOwnProperty.call(map, key) ? map[key] : '';
         });
     }
