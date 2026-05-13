@@ -91,3 +91,26 @@
     letter-spacing: 0.02em;
 }
 
+@media (max-width: 860px) {
+    .site-footer {
+        padding: 2.5rem 1rem 1.4rem;
+    }
+    .site-footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-footer {
+        padding: 2rem 0.9rem 1.2rem;
+    }
+    .site-footer h4 {
+        font-size: 0.95rem;
+    }
+    .site-footer a,
+    .site-footer p {
+        font-size: 0.88rem;
+    }
+}
+

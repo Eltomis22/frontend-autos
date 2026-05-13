@@ -102,8 +102,9 @@ const Components = (() => {
         return `
             <div class="car-card-image">
                 ${foto
-                    ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>Sin foto disponible</div>'">`
-                    : `<div class="no-image">Sin foto disponible</div>`}
+                    ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}" onerror="this.onerror=null; this.style.display='none'; this.parentElement.querySelector('.no-image').style.display='flex';">`
+                    : ''}
+                <div class="no-image" style="display: ${foto ? 'none' : 'flex'};">Sin foto disponible</div>
                 ${withBadge ? `<span class="car-card-badge">Disponible</span>` : ''}
                 ${withCheckbox
                     ? `<label class="car-card-checkbox" title="Marcar para comparar">
@@ -218,6 +219,52 @@ const Components = (() => {
     }
 
 
+    function publicacionCard(car, { actions = '' } = {}) {
+        const foto = primaryImage(car);
+        const meta = [];
+        if (car.anio) meta.push(`Año ${car.anio}`);
+        if (car.kilometraje != null) meta.push(formatKm(car.kilometraje));
+        return `
+            <article class="publicacion-card">
+                <div class="publicacion-image">
+                    ${foto
+                        ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}">`
+                        : `<div class="no-image">Sin foto</div>`}
+                </div>
+                <div class="publicacion-body">
+                    <h3 class="publicacion-title">${escapeHtml(car.marca)} ${escapeHtml(car.modelo)}</h3>
+                    <span class="publicacion-meta">${meta.join(' · ') || 'Sin detalles'}</span>
+                    <span class="publicacion-meta">📍 ${escapeHtml(car.ubicacion || 'Sin ubicación')}</span>
+                    <span class="publicacion-price">${formatPrice(car.precio)}</span>
+                </div>
+                <div class="publicacion-actions">
+                    ${actions}
+                </div>
+            </article>`;
+    }
+
+
+    function photoTile(photo, index) {
+        return `
+            <div class="photo-tile" draggable="true" data-id="${escapeHtml(photo.id)}">
+                <img src="${escapeHtml(photo.url)}" alt="Foto ${index + 1}">
+                ${index === 0 ? '<span class="photo-cover-badge">Portada</span>' : ''}
+                <button type="button" class="photo-remove" data-remove="${escapeHtml(photo.id)}" aria-label="Quitar foto ${index + 1}">×</button>
+                <span class="photo-order">${index + 1}</span>
+            </div>`;
+    }
+
+    function photosGrid(photos = []) {
+        if (!Array.isArray(photos) || photos.length === 0) {
+            return `
+                <div class="photos-empty">
+                    Todavía no agregaste fotos. Usá <strong>“+ Agregar fotos”</strong> para sumar imágenes.
+                </div>`;
+        }
+        return photos.map((photo, idx) => photoTile(photo, idx)).join('');
+    }
+
+
     return {
         imageUrls,
         primaryImage,
@@ -229,5 +276,7 @@ const Components = (() => {
         favoritoButton,
         consultaVehiculoHeader,
         consultaCard,
+        publicacionCard,
+        photosGrid,
     };
 })();

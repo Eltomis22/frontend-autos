@@ -53,6 +53,7 @@
 
     .navbar-menu.open {
         display: flex;
+        z-index: 101;
     }
 
     .navbar-menu a {

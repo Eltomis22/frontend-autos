@@ -86,23 +86,7 @@ function renderPhotosGrid() {
     const grid = document.getElementById('photosGrid');
     if (!grid) return;
 
-    if (selectedPhotos.length === 0) {
-        grid.innerHTML = `
-            <div class="photos-empty">
-                Todavía no agregaste fotos. Usá <strong>“+ Agregar fotos”</strong> para sumar imágenes.
-            </div>`;
-        return;
-    }
-
-    grid.innerHTML = selectedPhotos.map((p, idx) => `
-        <div class="photo-tile" draggable="true" data-id="${p.id}">
-            <img src="${p.url}" alt="Foto ${idx + 1}">
-            ${idx === 0 ? '<span class="photo-cover-badge">Portada</span>' : ''}
-            <button type="button" class="photo-remove" data-remove="${p.id}" aria-label="Quitar foto ${idx + 1}">×</button>
-            <span class="photo-order">${idx + 1}</span>
-        </div>
-    `).join('');
-
+    grid.innerHTML = Components.photosGrid(selectedPhotos);
     bindPhotoTileEvents(grid);
 }
 
@@ -207,8 +191,12 @@ async function handlePublish(e) {
         showAlert('message', 'Ingresá un año válido.', 'error');
         return;
     }
-    if (datos.precio < 0) {
-        showAlert('message', 'El precio no puede ser negativo.', 'error');
+    if (!Number.isFinite(datos.precio) || datos.precio < 0) {
+        showAlert('message', 'Ingresá un precio válido mayor o igual a 0.', 'error');
+        return;
+    }
+    if (!Number.isFinite(datos.kilometraje) || datos.kilometraje < 0) {
+        showAlert('message', 'Ingresá un kilometraje válido mayor o igual a 0.', 'error');
         return;
     }
 

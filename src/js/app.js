@@ -98,6 +98,21 @@ function route(name) {
 }
 
 /* ---------- Navbar rendering ---------- */
+function updateFooterLinks() {
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+
+    const loginHref = route('login');
+    const registerHref = route('register');
+
+    footer.querySelectorAll(`a[href="${loginHref}"]`).forEach((link) => {
+        link.hidden = Auth.isLoggedIn();
+    });
+    footer.querySelectorAll(`a[href="${registerHref}"]`).forEach((link) => {
+        link.hidden = Auth.isLoggedIn();
+    });
+}
+
 function renderNavbar(current = '') {
     const menu = document.getElementById('navbarMenu');
     if (!menu) return;
@@ -105,8 +120,10 @@ function renderNavbar(current = '') {
     const rol = Auth.getRol();
     const logged = Auth.isLoggedIn();
 
-    const link = (href, label, key, cls = '') =>
-        `<li><a href="${href}" class="${current === key ? 'active' : ''} ${cls}">${label}</a></li>`;
+    const link = (href, label, key, cls = '') => {
+        const isCurrent = current === key;
+        return `<li><a href="${href}" class="${isCurrent ? 'active' : ''} ${cls}"${isCurrent ? ' aria-current="page"' : ''}>${label}</a></li>`;
+    };
 
     let html = '';
     html += link(route('index'), 'Inicio', 'home');
@@ -132,6 +149,7 @@ function renderNavbar(current = '') {
     }
 
     menu.innerHTML = html;
+    menu.setAttribute('aria-hidden', String(!menu.classList.contains('open')));
 
     const logoutLink = document.getElementById('logoutLink');
     if (logoutLink) {
@@ -142,9 +160,28 @@ function renderNavbar(current = '') {
         });
     }
 
+    updateFooterLinks();
+
     const toggle = document.getElementById('navbarToggle');
-    if (toggle) {
-        toggle.addEventListener('click', () => menu.classList.toggle('open'));
+    if (toggle && toggle.dataset.navReady !== '1') {
+        toggle.dataset.navReady = '1';
+        toggle.addEventListener('click', () => {
+            const open = menu.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', String(open));
+            menu.setAttribute('aria-hidden', String(!open));
+        });
+    }
+
+    if (menu.dataset.menuReady !== '1') {
+        menu.dataset.menuReady = '1';
+        menu.addEventListener('click', (event) => {
+            const anchor = event.target.closest('a');
+            if (!anchor) return;
+            if (!menu.classList.contains('open')) return;
+            menu.classList.remove('open');
+            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            menu.setAttribute('aria-hidden', 'true');
+        });
     }
 }
 
@@ -153,7 +190,7 @@ function showAlert(containerId, text, type = 'info') {
     const el = document.getElementById(containerId);
     if (!el) return;
     const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ';
-    el.innerHTML = `<div class="alert alert-${type}"><strong>${icon}</strong> ${text}</div>`;
+    el.innerHTML = `<div class="alert alert-${type}"><strong>${icon}</strong> ${escapeHtml(text)}</div>`;
 }
 
 function clearAlert(containerId) {

@@ -38,9 +38,9 @@
                 </div>
                 <div class="hero-image">
                     <div class="hero-slider" id="heroSlider">
-                        <a href="#" class="hero-card" id="heroFeaturedCard">
+                        <a href="src/views/cars.html" class="hero-card" id="heroFeaturedCard" aria-label="Ir al catálogo de vehículos">
                             <div class="hero-card-img-wrapper">
-                                <img id="heroFeaturedImg" src="" alt="" style="display:none;">
+                                <img id="heroFeaturedImg" src="" alt="Vehículo destacado" style="display:none;">
                                 <div class="hero-card-placeholder" id="heroFeaturedPlaceholder">Seleccionando vehículo destacado...</div>
                             </div>
                             <div class="hero-card-title" id="heroFeaturedTitle">Unidad destacada</div>
@@ -274,23 +274,27 @@
 
             card.href = `${route('car-detail')}?id=${encodeURIComponent(car.idVehiculo)}`;
 
+            img.onerror = null;
             if (foto) {
+                img.onerror = () => {
+                    img.style.display = 'none';
+                    placeholder.textContent = 'Foto no disponible';
+                    placeholder.style.display = '';
+                };
                 img.src = foto;
                 img.alt = `${car.marca || ''} ${car.modelo || ''}`.trim();
                 img.style.display = '';
                 placeholder.style.display = 'none';
-                img.addEventListener('error', () => {
-                    img.style.display = 'none';
-                    placeholder.textContent = 'Foto no disponible';
-                    placeholder.style.display = '';
-                }, { once: true });
             } else {
+                img.onerror = null;
                 img.style.display = 'none';
                 placeholder.style.display = '';
                 placeholder.textContent = 'Sin foto disponible';
             }
 
-            title.textContent = `${car.marca || ''} ${car.modelo || ''}`.trim() || 'Vehículo destacado';
+            const titleText = `${car.marca || ''} ${car.modelo || ''}`.trim() || 'Vehículo destacado';
+            title.textContent = titleText;
+            card.setAttribute('aria-label', `Ver detalles de ${titleText}`);
 
             const chips = [];
             if (car.anio) chips.push(car.anio);

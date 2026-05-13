@@ -35,9 +35,14 @@ async function loadPublicaciones() {
             });
             return;
         }
-        container.innerHTML = vehiculos.map(renderPublicacion).join('');
+        container.innerHTML = vehiculos.map((v) => Components.publicacionCard(v, {
+            actions: `
+                <a href="${route('car-detail')}?id=${encodeURIComponent(v.idVehiculo)}" class="btn btn-ghost btn-sm">Ver</a>
+                <button class="btn btn-primary btn-sm" data-edit="${escapeHtml(v.idVehiculo)}">Editar</button>
+                <button class="btn btn-ghost btn-sm" data-delete="${escapeHtml(v.idVehiculo)}" style="color: var(--color-danger, #f87171);">Eliminar</button>`
+        })).join('');
         container.querySelectorAll('[data-edit]').forEach(btn => {
-            btn.addEventListener('click', () => openEditModal(vehiculos.find(v => v.idVehiculo === btn.dataset.edit)));
+            btn.addEventListener('click', () => openEditModal(vehiculos.find((v) => String(v.idVehiculo) === btn.dataset.edit)));
         });
         container.querySelectorAll('[data-delete]').forEach(btn => {
             btn.addEventListener('click', () => eliminarPublicacion(btn.dataset.delete));
@@ -51,35 +56,6 @@ async function loadPublicaciones() {
             fullSpan: true,
         });
     }
-}
-
-/**
- * Tarjeta de "mi publicación" del vendedor. Es similar a Components.carCard
- * pero con acciones propias (Ver / Editar / Eliminar), por eso vive acá.
- * Usamos Components.primaryImage para no duplicar la lógica de fotos.
- */
-function renderPublicacion(v) {
-    const foto = Components.primaryImage(v);
-    const detailHref = `${route('car-detail')}?id=${encodeURIComponent(v.idVehiculo)}`;
-    return `
-        <article class="publicacion-card">
-            <div class="publicacion-image">
-                ${foto
-                    ? `<img src="${escapeHtml(foto)}" alt="${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}">`
-                    : `<div class="no-image">Sin foto</div>`}
-            </div>
-            <div class="publicacion-body">
-                <h3 class="publicacion-title">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h3>
-                <span class="publicacion-meta">${v.anio ? 'Año ' + v.anio + ' · ' : ''}${v.kilometraje != null ? formatKm(v.kilometraje) : '—'}</span>
-                <span class="publicacion-meta">📍 ${escapeHtml(v.ubicacion || 'Sin ubicación')}</span>
-                <span class="publicacion-price">${formatPrice(v.precio)}</span>
-            </div>
-            <div class="publicacion-actions">
-                <a href="${detailHref}" class="btn btn-ghost btn-sm">Ver</a>
-                <button class="btn btn-primary btn-sm" data-edit="${escapeHtml(v.idVehiculo)}">Editar</button>
-                <button class="btn btn-ghost btn-sm" data-delete="${escapeHtml(v.idVehiculo)}" style="color: var(--color-danger, #f87171);">Eliminar</button>
-            </div>
-        </article>`;
 }
 
 /* ---------- Modal edición ---------- */

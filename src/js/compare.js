@@ -3,7 +3,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     renderNavbar('cars');
 
-    const cars = JSON.parse(localStorage.getItem('compareCars') || '[]');
+    let cars = [];
+    try {
+        cars = JSON.parse(localStorage.getItem('compareCars') || '[]');
+        if (!Array.isArray(cars)) cars = [];
+    } catch (err) {
+        console.warn('compareCars inválido en localStorage:', err);
+        cars = [];
+    }
+
     if (cars.length < 2) {
         document.querySelector('main .container').innerHTML = Components.emptyState({
             icon: '⚖️',

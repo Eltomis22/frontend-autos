@@ -85,7 +85,7 @@
 
                         <h3 style="margin: 1.5rem 0 1rem; font-size: 1.05rem;">Fotografías</h3>
                         <div class="form-group">
-                            <label>Imágenes del vehículo</label>
+                            <label for="imagenes">Imágenes del vehículo</label>
 
                             <!-- Grid de thumbnails: las pobla publish.js a partir
                                  de selectedPhotos[]. Vacío al inicio. -->
@@ -98,9 +98,9 @@
                             <button type="button" class="btn btn-ghost" id="addPhotosBtn">
                                 + Agregar fotos
                             </button>
-                            <input type="file" id="imagenes" multiple accept="image/*" hidden>
+                            <input type="file" id="imagenes" multiple accept="image/*" hidden aria-describedby="photosHint">
 
-                            <p class="form-hint">
+                            <p class="form-hint" id="photosHint">
                                 Podés agregar fotos en distintos pasos. Arrastrá las miniaturas para
                                 reordenarlas — la primera se usa como portada.
                             </p>

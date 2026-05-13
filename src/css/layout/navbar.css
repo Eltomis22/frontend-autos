@@ -97,9 +97,12 @@
     font-size: 0.93rem;
 }
 
-.navbar-menu a:hover {
+.navbar-menu a:hover,
+.navbar-menu a:focus-visible {
     background-color: var(--color-surface-3);
     color: var(--color-text);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
 }
 
 .navbar-menu a.active {
@@ -129,5 +132,10 @@
     cursor: pointer;
     font-size: 1.3rem;
     color: var(--color-text);
+}
+
+.navbar-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.16);
 }
 
