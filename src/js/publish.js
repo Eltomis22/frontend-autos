@@ -214,13 +214,9 @@ async function handlePublish(e) {
         if (selectedPhotos.length > 0 && idVehiculo) {
             const formData = new FormData();
             selectedPhotos.forEach((p) => formData.append('imagenes', p.file));
-            await fetch(`${API_BASE}/vehiculos/${idVehiculo}/imagenes`, {
+            await apiCall(`/vehiculos/${idVehiculo}/imagenes`, {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${Auth.getToken()}` },
                 body: formData,
-            }).then((r) => {
-                if (!r.ok) throw new Error('No se pudieron subir las imágenes');
-                return r.json();
             });
         }
 
