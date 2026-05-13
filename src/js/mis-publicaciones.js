@@ -2,10 +2,12 @@
 
 /**
  * Estado del modal de fotos durante una edición. Lo mantenemos a nivel
- * módulo para que los handlers (agregar / quitar) lo compartan sin tener
- * que pasarlo por argumentos. Se reinicia cada vez que se abre el modal.
+ * módulo para que los handlers (agregar / quitar / reordenar) lo compartan
+ * sin tener que pasarlo por argumentos. Se reinicia cada vez que se abre
+ * el modal.
  */
 let editPhotos = []; // [{ idImagen, urlImagen }] — las que YA están en la BD
+let editDragId = null; // id de la tile que se está arrastrando ahora
 
 document.addEventListener('DOMContentLoaded', () => {
     renderNavbar('mis-publicaciones');
@@ -201,7 +203,7 @@ function renderEditPhotosGrid() {
     }
 
     grid.innerHTML = editPhotos.map((p, idx) => `
-        <div class="photo-tile" data-id="${escapeHtml(p.idImagen)}">
+        <div class="photo-tile" draggable="true" data-id="${escapeHtml(p.idImagen)}">
             <img src="${escapeHtml(p.urlImagen)}" alt="Foto ${idx + 1}">
             ${idx === 0 ? '<span class="photo-cover-badge">Portada</span>' : ''}
             <button type="button" class="photo-remove" data-remove="${escapeHtml(p.idImagen)}" aria-label="Quitar foto ${idx + 1}">×</button>
@@ -212,6 +214,84 @@ function renderEditPhotosGrid() {
     grid.querySelectorAll('[data-remove]').forEach((btn) => {
         btn.addEventListener('click', () => borrarFotoEdicion(btn.dataset.remove));
     });
+
+    // Drag-and-drop para reordenar (idéntico patrón al de publish.js).
+    grid.querySelectorAll('.photo-tile').forEach((tile) => {
+        tile.addEventListener('dragstart', onEditPhotoDragStart);
+        tile.addEventListener('dragover', onEditPhotoDragOver);
+        tile.addEventListener('dragleave', onEditPhotoDragLeave);
+        tile.addEventListener('drop', onEditPhotoDrop);
+        tile.addEventListener('dragend', onEditPhotoDragEnd);
+    });
+}
+
+/* ---------- Drag-and-drop de fotos en el modal de edición ---------- */
+
+function onEditPhotoDragStart(e) {
+    editDragId = e.currentTarget.dataset.id;
+    e.currentTarget.classList.add('is-dragging');
+    if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', editDragId); } catch { /* ignore */ }
+    }
+}
+
+function onEditPhotoDragOver(e) {
+    if (!editDragId) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    const tile = e.currentTarget;
+    if (tile.dataset.id !== editDragId) {
+        tile.classList.add('is-drop-target');
+    }
+}
+
+function onEditPhotoDragLeave(e) {
+    e.currentTarget.classList.remove('is-drop-target');
+}
+
+async function onEditPhotoDrop(e) {
+    e.preventDefault();
+    const targetId = e.currentTarget.dataset.id;
+    const sourceId = editDragId;
+    if (!sourceId || !targetId || sourceId === targetId) return;
+
+    const fromIdx = editPhotos.findIndex((p) => p.idImagen === sourceId);
+    const toIdx   = editPhotos.findIndex((p) => p.idImagen === targetId);
+    if (fromIdx === -1 || toIdx === -1) return;
+
+    // Mutación optimista: reordenamos el array local y re-pintamos para
+    // que el cambio se vea al instante. Después persistimos.
+    const [moved] = editPhotos.splice(fromIdx, 1);
+    editPhotos.splice(toIdx, 0, moved);
+    renderEditPhotosGrid();
+    await persistirOrdenFotos();
+}
+
+function onEditPhotoDragEnd() {
+    document.querySelectorAll('#editPhotosGrid .photo-tile').forEach((t) => {
+        t.classList.remove('is-dragging', 'is-drop-target');
+    });
+    editDragId = null;
+}
+
+/**
+ * Persiste el orden actual de `editPhotos` en el backend. Se llama al
+ * soltar una foto (drop). Si falla, mostramos un alert pero NO revertimos
+ * el cambio visual — el próximo openEditModal recargará el estado real
+ * desde el backend.
+ */
+async function persistirOrdenFotos() {
+    const idVehiculo = document.getElementById('editId').value;
+    const ids = editPhotos.map((p) => p.idImagen);
+    try {
+        await apiCall(`/vehiculos/${idVehiculo}/imagenes/orden`, {
+            method: 'PATCH',
+            body: JSON.stringify({ ids }),
+        });
+    } catch (err) {
+        showAlert('editFeedback', 'No se pudo guardar el nuevo orden: ' + err.message, 'error');
+    }
 }
 
 async function borrarFotoEdicion(idImagen) {
