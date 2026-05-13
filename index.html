@@ -129,11 +129,11 @@
         </section>
 
         <section class="container text-center">
-            <h2 class="section-title">¿Buscando tu próximo auto?</h2>
-            <p class="section-subtitle">Explorá el catálogo o registrate para guardar y comparar tus favoritos.</p>
+            <h2 class="section-title" id="bottomCtaTitle">¿Buscando tu próximo auto?</h2>
+            <p class="section-subtitle" id="bottomCtaSubtitle">Explorá el catálogo o registrate para guardar y comparar tus favoritos.</p>
             <div class="flex-row" style="justify-content: center;">
                 <a href="src/views/cars.html" class="btn btn-primary">Ver catálogo</a>
-                <a href="src/views/register.html" class="btn btn-secondary">Crear cuenta</a>
+                <a href="src/views/register.html" class="btn btn-secondary" id="bottomSecondaryCta">Crear cuenta</a>
             </div>
         </section>
     </main>
@@ -148,9 +148,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Inyecta header y footer reutilizables, y marca el link activo del navbar.
             Layout.init('home');
-            adaptHeroCta();
+            adaptHomeCtas();
             loadLatestCars();
         });
+
+        /**
+         * Adapta los dos CTAs secundarios (el del hero arriba y el de la sección
+         * "¿Buscando tu próximo auto?" al pie) según si el usuario está logueado
+         * y su rol. Reemplaza al viejo `adaptHeroCta` que solo cubría el hero —
+         * el CTA de abajo seguía mostrando "Crear cuenta" incluso ya logueado.
+         */
+        function adaptHomeCtas() {
+            adaptHeroCta();
+            adaptBottomCta();
+        }
 
         function adaptHeroCta() {
             const cta = document.getElementById('heroSecondaryCta');
@@ -162,6 +173,32 @@
             } else {
                 cta.href = 'src/views/mi-cuenta.html';
                 cta.textContent = 'Ir a mi cuenta';
+            }
+        }
+
+        /**
+         * Adapta el CTA al pie ("¿Buscando tu próximo auto?"). Si el usuario
+         * ya está logueado, ofrecer "Crear cuenta" es contradictorio (el bug
+         * que reportó el usuario), así que cambiamos el copy y el botón al
+         * destino útil según rol.
+         */
+        function adaptBottomCta() {
+            const btn      = document.getElementById('bottomSecondaryCta');
+            const title    = document.getElementById('bottomCtaTitle');
+            const subtitle = document.getElementById('bottomCtaSubtitle');
+            if (!btn) return;
+            if (!Auth.isLoggedIn()) return; // visitantes ven el copy original
+
+            if (Auth.getRol() === 'vendedor') {
+                btn.href = 'src/views/publish.html';
+                btn.textContent = 'Publicar mi auto';
+                if (title)    title.textContent    = '¿Tenés un auto para vender?';
+                if (subtitle) subtitle.textContent = 'Sumá una nueva publicación al catálogo o revisá las que ya tenés activas.';
+            } else {
+                btn.href = 'src/views/mis-favoritos.html';
+                btn.textContent = 'Mis favoritos';
+                if (title)    title.textContent    = '¿Listo para elegir tu próximo auto?';
+                if (subtitle) subtitle.textContent = 'Volvé al catálogo o revisá los vehículos que marcaste como favoritos.';
             }
         }
 
