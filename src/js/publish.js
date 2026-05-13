@@ -222,9 +222,9 @@ async function handlePublish(e) {
 
         // 3. Disparar valoración técnica (endpoint interno)
         if (idVehiculo) {
-            try {
-                await apiCall(`/ia/analizar/${idVehiculo}`, { method: 'POST' });
-            } catch { /* no bloqueamos la publicación */ }
+            // Disparamos en segundo plano sin "await" para no bloquear 
+            // la redirección si la IA tarda mucho en responder.
+            apiCall(`/ia/analizar/${idVehiculo}`, { method: 'POST' }).catch(() => {});
         }
 
         showAlert('message', '¡Vehículo publicado correctamente! Redirigiendo al catálogo...', 'success');
