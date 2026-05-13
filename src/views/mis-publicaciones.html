@@ -68,6 +68,23 @@
                     <label for="editDescripcion">Descripción</label>
                     <textarea id="editDescripcion" rows="4" maxlength="2000"></textarea>
                 </div>
+
+                <!-- Gestión de fotos: ver, borrar individualmente y sumar nuevas.
+                     Las acciones impactan al backend de inmediato (no esperan a
+                     "Guardar cambios") porque manejan archivos. -->
+                <div class="form-group">
+                    <label>Fotos del vehículo</label>
+                    <div id="editPhotosGrid" class="photos-grid"></div>
+                    <button type="button" class="btn btn-ghost btn-sm" id="editAddPhotosBtn">
+                        + Agregar fotos
+                    </button>
+                    <input type="file" id="editPhotosInput" multiple accept="image/*" hidden>
+                    <p class="form-hint">
+                        El × sobre cada foto la elimina al instante. Las fotos nuevas se suben
+                        al final de la lista.
+                    </p>
+                </div>
+
                 <div class="flex-row" style="justify-content: flex-end; gap: 0.6rem;">
                     <button type="button" class="btn btn-ghost" id="editCancelBtn">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="editSaveBtn">Guardar cambios</button>
