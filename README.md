@@ -11,10 +11,10 @@ Sitio web público de **CATO Group — Agencia Multimarca**: plataforma de compr
 Consume la API del backend y ofrece:
 
 - Catálogo con filtros (marca, modelo, año, precio, km, ubicación).
-- Ficha del vehículo con fotos, datos, vendedor, **valoración automática** y formulario de consulta.
+- Ficha del vehículo con fotos, datos, vendedor, **valoración automática**, formulario de consulta, simulador de financiación, costos asociados e historial de precios.
 - Comparador de varios autos lado a lado.
 - Registro/login con dos roles:
-  - **Comprador**: contactar vendedor, historial de consultas.
+  - **Comprador**: guardar vehículos en favoritos, contactar vendedor, historial de consultas.
   - **Vendedor**: publicar, editar, eliminar autos y responder consultas recibidas.
 - Gestión del perfil (nombre, contraseña).
 
@@ -43,10 +43,12 @@ frontend-autos/
     │   ├── styles.css              Punto de entrada (@imports)
     │   ├── base/                   reset, variables, typography, utilities, responsive
     │   ├── layout/                 navbar, container, section, auth-layout, footer
-    │   ├── components/             buttons, cards, forms, alerts, states, modal, password-toggle, thread
+    │   ├── components/             buttons, surface, cards, forms, alerts, states, modal, password-toggle, thread, favorito
     │   └── pages/                  home, cars, car-detail, compare, consultas, mis-publicaciones, mi-cuenta
     ├── js/
     │   ├── app.js                  Helpers compartidos (apiCall, Auth, route, renderNavbar)
+    │   ├── components.js           Renderizado de componentes reutilizables de la UI (cards, states)
+    │   ├── layout.js               Inyección dinámica de header y footer
     │   ├── consultas-thread.js     Render del hilo (reutilizado en consultas y mis-consultas)
     │   └── <página>.js             Lógica específica de cada HTML
     └── views/                      Resto de los HTML (cars, login, publish, etc.)
@@ -125,7 +127,7 @@ displayCarDetail(car, iaAnalysis);
 `renderNavbar()` en `app.js` detecta sesión y rol, y cambia los links:
 
 - **No logueado**: Inicio · Buscar autos · Iniciar sesión · Registrarme
-- **Comprador**: Inicio · Buscar autos · Mis consultas · Mi cuenta · Cerrar sesión
+- **Comprador**: Inicio · Buscar autos · Mis favoritos · Mis consultas · Mi cuenta · Cerrar sesión
 - **Vendedor**: Inicio · Buscar autos · Publicar auto · Mis publicaciones · Consultas recibidas · Mi cuenta · Cerrar sesión
 
 Las páginas protegidas redirigen a `login.html` si `Auth.isLoggedIn()` es `false`.
